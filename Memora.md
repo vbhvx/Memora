@@ -55,3 +55,55 @@ The application must include the following capabilities.
 
 Treat each capability as a testable feature rather than a visual placeholder.
 
+## 3. Product Scope and User Experience
+
+### 3.1 Primary application screens
+
+**Dashboard**
+
+Display recent notes, pinned notes, recently updated content, and a quick-capture entry point.
+
+The dashboard should help users resume work immediately rather than requiring them to navigate through multiple folders before capturing information.
+
+**Notes workspace**
+
+Provide an editing and reading environment containing:
+
+- Note title
+- Rich-text content editor
+- Save-status indicator
+- Folder and tag controls
+- Pin and archive actions
+- AI assistance controls
+- Sharing and permission settings
+- Created and updated timestamps
+
+**Search**
+
+Provide a central search experience with:
+
+- Title matching
+- Full-text content matching
+- Relevant result excerpts
+- Folder and tag filters
+- Pinned and archived filters
+- Recent-result ranking where useful
+
+Only display notes the current user is authorized to access.
+
+**Tasks and action items**
+
+Display actions extracted from notes and tasks created manually by users.
+
+Users should be able to review task status, edit task descriptions, set due dates, and navigate back to the note from which an action originated.
+
+**Shared note view**
+
+Provide a lightweight page through which an invited recipient can access a specific shared note without registering for a full account when the share configuration permits guest access.
+
+The page must disclose the granted permission and provide only the actions the share author has explicitly allowed.
+
+**Settings and account management**
+
+Allow users to manage their account, session, preferences, AI settings, and active share links.
+
