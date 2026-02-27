@@ -107,3 +107,33 @@ The page must disclose the granted permission and provide only the actions the s
 
 Allow users to manage their account, session, preferences, AI settings, and active share links.
 
+### 3.2 Quick capture
+
+Minimize the number of steps required to create a note.
+
+A user should be able to open the application, enter a title or content, and save a note without completing unnecessary classification fields.
+
+The system may apply sensible defaults, such as placing a new note in an Inbox folder, but should not require the user to select a folder, tag, category, or AI mode before writing.
+
+The application should not generate a title or call an AI service automatically for every keystroke.
+
+Instead, provide explicit AI actions and optional user-controlled automation settings.
+
+### 3.3 Save behavior
+
+Implement reliable autosave with a clear state indicator:
+
+- `Saving`
+- `Saved`
+- `Offline`
+- `Save failed`
+- `Conflict detected`
+
+Use a debounced save mechanism to reduce unnecessary requests while preserving edits.
+
+The application must distinguish unsaved content from persisted content. A note should never be displayed as successfully saved solely because the editor updated its local state.
+
+When a save fails, preserve the user's current content and provide a retry mechanism.
+
+Define an explicit conflict strategy for concurrent edits. For the initial release, optimistic concurrency control using a note version or revision number is sufficient. Do not silently overwrite a newer version of a note with stale content.
+
