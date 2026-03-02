@@ -137,3 +137,78 @@ When a save fails, preserve the user's current content and provide a retry mecha
 
 Define an explicit conflict strategy for concurrent edits. For the initial release, optimistic concurrency control using a note version or revision number is sufficient. Do not silently overwrite a newer version of a note with stale content.
 
+## 4. Technical Stack
+
+Use a TypeScript-first architecture that keeps the application maintainable and allows AI functionality to evolve independently of ordinary note operations.
+
+| Layer | Recommended technology |
+|---|---|
+| Frontend | Next.js, React, TypeScript |
+| Styling | Tailwind CSS |
+| Rich-text editor | Tiptap or another maintained editor framework |
+| Backend | Next.js route handlers or a dedicated Node.js API |
+| Database | PostgreSQL |
+| ORM | Drizzle ORM or Prisma |
+| Runtime validation | Zod or an equivalent schema validator |
+| Search | PostgreSQL full-text search |
+| AI integration | Provider-agnostic server-side adapter |
+| Authentication | Maintained authentication and session library |
+| API documentation | OpenAPI 3.x where an external API is exposed |
+| Unit and integration testing | Vitest or Jest |
+| End-to-end testing | Playwright |
+| Deployment | Supported application hosting with managed PostgreSQL |
+
+Select one ORM and one primary server architecture.
+
+For the first release, PostgreSQL full-text search is sufficient. Do not introduce a separate vector database or search cluster until actual product requirements justify the additional complexity.
+
+The AI provider and specific model must be configurable. Do not hard-code an assumed provider's availability, pricing, capabilities, or service-level guarantees.
+
+## 5. System Architecture
+
+Separate the application into clear layers so that ordinary note operations remain reliable even when AI services are unavailable.
+
+```text
+Browser
+  |
+  v
+Frontend and Rich-Text Editor
+  |
+  v
+Authenticated API / Guest Share API
+  |
+  v
+Authentication and Access Control
+  |
+  v
+Input Validation
+  |
+  v
+Application Services
+  |
+  +--------------------+
+  |                    |
+  v                    v
+PostgreSQL          AI Service Adapter
+  |                    |
+  v                    v
+Notes, Tasks,       Title Suggestions,
+Shares, Revisions   Summaries, Action Items
+  |
+  v
+Search Indexes and Activity Metadata
+```
+
+Important architectural rules:
+
+- The browser must never receive the AI provider's secret API key.
+- The backend must authorize requests before returning private note content.
+- Guest share links must grant access only to the resources and capabilities associated with that share.
+- AI processing must not implicitly make a note public or shared.
+- AI failures must not prevent users from reading or editing already-saved notes.
+- Search must respect the current user's data-access scope.
+- Database updates and task creation must preserve integrity.
+- Sensitive note content must not be unnecessarily written to application logs.
+
+Treat AI as an optional capability layered on top of a reliable note-management system, not as a dependency for basic CRUD operations.
+
