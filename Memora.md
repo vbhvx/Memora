@@ -212,3 +212,19 @@ Important architectural rules:
 
 Treat AI as an optional capability layered on top of a reliable note-management system, not as a dependency for basic CRUD operations.
 
+## 6. Data Model
+
+Use relational data modeling, appropriate indexes, explicit ownership, and version tracking.
+
+### 6.1 User
+
+Fields:
+
+- `id`
+- `email`
+- `name`
+- `createdAt`
+- `updatedAt`
+
+Authentication fields should be managed by the selected authentication system, with password hashes or external identity references stored according to that system's requirements.
+
