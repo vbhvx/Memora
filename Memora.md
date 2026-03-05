@@ -228,3 +228,52 @@ Fields:
 
 Authentication fields should be managed by the selected authentication system, with password hashes or external identity references stored according to that system's requirements.
 
+### 6.2 Note
+
+Fields:
+
+- `id`
+- `ownerId`
+- `folderId`
+- `title`
+- `content`
+- `contentFormat`
+- `createdAt`
+- `updatedAt`
+- `version`
+- `isPinned`
+- `archivedAt`
+- `deletedAt`
+
+Use a structured content representation such as editor-generated JSON if appropriate. Store it alongside a normalized or searchable text representation, or derive that representation when saving.
+
+Do not assume that an editor's serialized JSON is suitable for direct full-text search.
+
+The `version` field should increment when a saved revision is committed, enabling concurrent-update detection.
+
+### 6.3 Folder
+
+Fields:
+
+- `id`
+- `ownerId`
+- `name`
+- `parentId`
+- `createdAt`
+- `updatedAt`
+
+The initial release may implement a single-level folder hierarchy if that produces a more reliable product. If nested folders are supported, prevent cycles and enforce ownership across parent-child relationships.
+
+### 6.4 Tag
+
+Fields:
+
+- `id`
+- `ownerId`
+- `name`
+- `createdAt`
+
+Use a many-to-many association through a `NoteTag` table.
+
+Enforce appropriate uniqueness constraints so the same owner does not accidentally create multiple equivalent tags.
+
