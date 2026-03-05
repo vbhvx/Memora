@@ -277,3 +277,29 @@ Use a many-to-many association through a `NoteTag` table.
 
 Enforce appropriate uniqueness constraints so the same owner does not accidentally create multiple equivalent tags.
 
+### 6.5 NoteTag
+
+Fields:
+
+- `noteId`
+- `tagId`
+- `createdAt`
+
+Validate that the note and tag belong to the same owner unless the data model explicitly supports another authorized relationship.
+
+### 6.6 NoteRevision
+
+Fields:
+
+- `id`
+- `noteId`
+- `version`
+- `titleSnapshot`
+- `contentSnapshot`
+- `createdAt`
+- `createdBy`
+
+Use revision history to support conflict handling and practical recovery from accidental overwrites.
+
+The initial release can retain a limited number of revisions or implement revisions only for meaningful saved changes. Define a retention policy instead of growing the revision table without control.
+
