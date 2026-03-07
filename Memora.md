@@ -346,3 +346,55 @@ The exact author fields depend on whether the commenter has an account.
 
 Guest comments should not imply a verified identity. Clearly distinguish a guest-provided display name from an authenticated account identity.
 
+### 6.9 Task
+
+Fields:
+
+- `id`
+- `ownerId`
+- `sourceNoteId`
+- `sourceRevisionId`
+- `title`
+- `description`
+- `status`
+- `priority`
+- `dueAt`
+- `assigneeId`
+- `createdAt`
+- `updatedAt`
+- `completedAt`
+
+Initial statuses may include:
+
+`todo`, `in_progress`, `done`
+
+A task can be created manually or accepted from AI-generated action items.
+
+Keep a reference to the originating note and, where feasible, the revision used for extraction so users can review the source context.
+
+### 6.10 AIProcessingJob
+
+Fields:
+
+- `id`
+- `noteId`
+- `userId`
+- `operation`
+- `status`
+- `sourceVersion`
+- `modelIdentifier`
+- `resultJson`
+- `errorCode`
+- `createdAt`
+- `completedAt`
+
+Example operation values:
+
+- `generate_title`
+- `summarize`
+- `extract_actions`
+
+Use background jobs only when needed for long-running processing, retries, or progress reporting. A short synchronous request is acceptable for the initial release when latency and request limits allow it.
+
+Avoid storing entire prompts or full note content in operational records by default.
+
