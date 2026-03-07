@@ -303,3 +303,46 @@ Use revision history to support conflict handling and practical recovery from ac
 
 The initial release can retain a limited number of revisions or implement revisions only for meaningful saved changes. Define a retention policy instead of growing the revision table without control.
 
+### 6.7 NoteShare
+
+Fields:
+
+- `id`
+- `noteId`
+- `tokenHash`
+- `permission`
+- `expiresAt`
+- `revokedAt`
+- `createdBy`
+- `createdAt`
+
+Possible permissions:
+
+- `view`
+- `comment`
+- `edit`
+
+Only implement permissions the backend actually enforces.
+
+Store a hash of a securely generated share token rather than the usable token itself. The share URL should contain a cryptographically random secret with enough entropy to make guessing infeasible.
+
+If a share is intended for private collaboration, it may optionally require an authenticated collaborator or an additional access factor. Do not expose private note content just because a token is present in an arbitrary request.
+
+### 6.8 NoteComment
+
+Fields:
+
+- `id`
+- `noteId`
+- `shareId`
+- `authorUserId`
+- `guestDisplayName`
+- `content`
+- `createdAt`
+- `updatedAt`
+- `deletedAt`
+
+The exact author fields depend on whether the commenter has an account.
+
+Guest comments should not imply a verified identity. Clearly distinguish a guest-provided display name from an authenticated account identity.
+
