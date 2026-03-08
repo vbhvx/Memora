@@ -398,3 +398,21 @@ Use background jobs only when needed for long-running processing, retries, or pr
 
 Avoid storing entire prompts or full note content in operational records by default.
 
+### 6.11 Data integrity
+
+Implement:
+
+- Foreign-key constraints
+- Appropriate uniqueness constraints
+- Indexes on owner IDs, folder IDs, note tags, statuses, and timestamps
+- Query patterns that scope records to their authorized owner
+- Consistent handling of soft-deleted notes
+- Transactions for operations that need multiple database changes to succeed together
+- Database migrations that can be replayed reliably
+
+Deleting a note should follow an explicitly documented policy for revisions, shares, comments, AI jobs, and tasks derived from it.
+
+Revoking a share should invalidate its access immediately for subsequent requests. It must not merely hide the link in the owner's interface.
+
+## 7. Note Organization and Search
+
