@@ -451,3 +451,29 @@ Do not assume that a basic SQL `LIKE` query is equivalent to relevance-ranked fu
 
 Use debounced search requests, bounded result counts, and pagination to control database load.
 
+### 7.3 Permission-aware indexing
+
+Search results must be scoped to the authenticated owner or to the specific authorized sharing context.
+
+A matching title must not leak through search results if the caller cannot read the note itself.
+
+Ensure that deleted content, revoked shares, and inaccessible workspaces or resources cannot be retrieved through an alternative search or autocomplete endpoint.
+
+### 7.4 Future semantic search
+
+Semantic search may be added later to answer queries such as:
+
+- “Find my notes about database transactions.”
+- “Where did I document the authentication bug?”
+- “Show notes related to my Web3 roadmap.”
+
+If introduced, embeddings must respect the same ownership and authorization rules as ordinary search.
+
+Do not send all notes to an AI provider for every search request. Retrieve a limited set of authorized candidates first and process only what the feature needs.
+
+## 8. AI-Assisted Note Processing
+
+The AI layer should perform three main operations: title generation, summarization, and action-item extraction.
+
+AI output must be treated as a suggestion requiring validation and, for changes to user data, explicit approval.
+
