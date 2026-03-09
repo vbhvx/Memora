@@ -416,3 +416,38 @@ Revoking a share should invalidate its access immediately for subsequent request
 
 ## 7. Note Organization and Search
 
+### 7.1 Organization features
+
+Implement:
+
+- Folders
+- Tags
+- Pinned notes
+- Archive
+- Recently updated notes
+- Deleted notes or a trash-and-restore workflow, if included
+- Search and filters
+- Sorting by title, update time, and creation time
+
+Avoid forcing all notes into a rigid category structure. Users should be able to write a note without first deciding exactly where it belongs.
+
+### 7.2 Full-text search
+
+Use PostgreSQL full-text search as the initial search engine.
+
+Index note titles and textual note content. Where language-specific stemming is unsuitable, support an appropriate configuration or additional literal matching.
+
+Search should support:
+
+- Partial or phrase-oriented matching where practical
+- Relevance-ranked results
+- Matching excerpts
+- Folder filters
+- Tag filters
+- Archived-state filters
+- Date or recency sorting
+
+Do not assume that a basic SQL `LIKE` query is equivalent to relevance-ranked full-text search.
+
+Use debounced search requests, bounded result counts, and pagination to control database load.
+
