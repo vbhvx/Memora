@@ -1,0 +1,442 @@
+import { db, pool } from '@/db/client';
+import { notes, noteRevisions, noteTags, tags, folders } from '@/db/schema';
+import { eq, and, isNull, isNotNull, desc, asc, inArray } from 'drizzle-orm';
+import { ApiError } from '../errors/api-error';
+import crypto from 'crypto';
+
+export interface CreateNoteInput {
+  title?: string;
+  content?: string;
+  plainText?: string;
+  folderId?: string | null;
+  contentFormat?: string;
+  isPinned?: boolean;
+  tagIds?: string[];
+}
+
+export interface UpdateNoteInput {
+  title?: string;
+  content?: string;
+  plainText?: string;
+  folderId?: string | null;
+  isPinned?: boolean;
+  isArchived?: boolean;
+  version?: number;
+}
+
+export interface ListNotesOptions {
+  folderId?: string | null;
+  tagId?: string;
+  isPinned?: boolean;
+  isArchived?: boolean;
+  isTrash?: boolean;
+  sort?: 'updated' | 'created' | 'title';
+  order?: 'asc' | 'desc';
+  limit?: number;
+  offset?: number;
+}
+
+export class NoteService {
+  static async createNote(userId: string, input: CreateNoteInput) {
+    const noteId = `note_${crypto.randomUUID()}`;
+    const title = input.title?.trim() || 'Untitled';
+    const content = input.content || '';
+    const plainText = input.plainText || '';
+    const contentFormat = input.contentFormat || 'tiptap_json';
+    const isPinned = input.isPinned ?? false;
+
+    // Validate folder ownership if provided
+    if (input.folderId) {
+      const folder = await db.query.folders.findFirst({
+        where: and(eq(folders.id, input.folderId), eq(folders.ownerId, userId)),
+      });
+      if (!folder) {
+        throw ApiError.badRequest('Specified folder does not exist or belong to you.');
+      }
+    }
+
+    const [createdNote] = await db
+      .insert(notes)
+      .values({
+        id: noteId,
+        ownerId: userId,
+        folderId: input.folderId || null,
+        title,
+        content,
+        plainText,
+        contentFormat,
+        version: 1,
+        isPinned,
+      })
+      .returning();
+
+    // Create initial revision
+    const revId = `rev_${crypto.randomUUID()}`;
+    await db.insert(noteRevisions).values({
+      id: revId,
+      noteId: createdNote.id,
+      version: 1,
+      titleSnapshot: title,
+      contentSnapshot: content,
+      plainTextSnapshot: plainText,
+      createdBy: userId,
+    });
+
+    // Attach tags if provided
+    if (input.tagIds && input.tagIds.length > 0) {
+      // Validate that all tags belong to user
+      const userTags = await db.query.tags.findMany({
+        where: and(eq(tags.ownerId, userId), inArray(tags.id, input.tagIds)),
+      });
+      const validTagIds = userTags.map((t) => t.id);
+      if (validTagIds.length > 0) {
+        await db.insert(noteTags).values(
+          validTagIds.map((tid) => ({
+            noteId: createdNote.id,
+            tagId: tid,
+          }))
+        );
+      }
+    }
+
+    return this.getNoteById(userId, createdNote.id);
+  }
+
+  static async getNoteById(userId: string, noteId: string) {
+    const note = await db.query.notes.findFirst({
+      where: and(eq(notes.id, noteId), eq(notes.ownerId, userId), isNull(notes.deletedAt)),
+      with: {
+        folder: true,
+        noteTags: {
+          with: {
+            tag: true,
+          },
+        },
+      },
+    });
+
+    if (!note) {
+      throw ApiError.notFound('Note not found.');
+    }
+
+    return {
+      ...note,
+      tags: note.noteTags.map((nt) => nt.tag),
+    };
+  }
+
+  static async updateNote(userId: string, noteId: string, input: UpdateNoteInput) {
+    const existing = await db.query.notes.findFirst({
+      where: and(eq(notes.id, noteId), eq(notes.ownerId, userId), isNull(notes.deletedAt)),
+    });
+
+    if (!existing) {
+      throw ApiError.notFound('Note not found.');
+    }
+
+    // Optimistic Concurrency Control
+    if (input.version !== undefined && input.version !== existing.version) {
+      throw ApiError.conflict(
+        `Conflict detected: Stale update rejected. Current server version is ${existing.version}, received ${input.version}.`,
+        [
+          {
+            field: 'version',
+            code: 'VERSION_MISMATCH',
+            message: `Current note version is ${existing.version}`,
+          },
+        ]
+      );
+    }
+
+    // Validate folder ownership if changed
+    if (input.folderId !== undefined && input.folderId !== null && input.folderId !== existing.folderId) {
+      const folder = await db.query.folders.findFirst({
+        where: and(eq(folders.id, input.folderId), eq(folders.ownerId, userId)),
+      });
+      if (!folder) {
+        throw ApiError.badRequest('Specified folder does not exist or belong to you.');
+      }
+    }
+
+    const nextVersion = existing.version + 1;
+    const title = input.title !== undefined ? input.title.trim() || 'Untitled' : existing.title;
+    const content = input.content !== undefined ? input.content : existing.content;
+    const plainText = input.plainText !== undefined ? input.plainText : existing.plainText;
+    const isPinned = input.isPinned !== undefined ? input.isPinned : existing.isPinned;
+    const folderId = input.folderId !== undefined ? input.folderId : existing.folderId;
+    const archivedAt =
+      input.isArchived !== undefined
+        ? input.isArchived
+          ? new Date()
+          : null
+        : existing.archivedAt;
+
+    const [updated] = await db
+      .update(notes)
+      .set({
+        title,
+        content,
+        plainText,
+        folderId,
+        isPinned,
+        archivedAt,
+        version: nextVersion,
+        updatedAt: new Date(),
+      })
+      .where(and(eq(notes.id, noteId), eq(notes.ownerId, userId)))
+      .returning();
+
+    // Create a new revision snapshot if title or content changed
+    if (title !== existing.title || content !== existing.content) {
+      await db.insert(noteRevisions).values({
+        id: `rev_${crypto.randomUUID()}`,
+        noteId: noteId,
+        version: nextVersion,
+        titleSnapshot: title,
+        contentSnapshot: content,
+        plainTextSnapshot: plainText,
+        createdBy: userId,
+      });
+    }
+
+    return this.getNoteById(userId, updated.id);
+  }
+
+  static async deleteNote(userId: string, noteId: string, hard = false) {
+    const existing = await db.query.notes.findFirst({
+      where: and(eq(notes.id, noteId), eq(notes.ownerId, userId)),
+    });
+
+    if (!existing) {
+      throw ApiError.notFound('Note not found.');
+    }
+
+    if (hard) {
+      await db.delete(notes).where(and(eq(notes.id, noteId), eq(notes.ownerId, userId)));
+    } else {
+      await db
+        .update(notes)
+        .set({ deletedAt: new Date() })
+        .where(and(eq(notes.id, noteId), eq(notes.ownerId, userId)));
+    }
+
+    return { success: true, id: noteId };
+  }
+
+  static async listNotes(userId: string, options: ListNotesOptions = {}) {
+    const conditions = options.isTrash
+      ? [eq(notes.ownerId, userId), isNotNull(notes.deletedAt)]
+      : [eq(notes.ownerId, userId), isNull(notes.deletedAt)];
+
+    if (options.folderId !== undefined) {
+      if (options.folderId === null || options.folderId === 'inbox') {
+        conditions.push(isNull(notes.folderId));
+      } else {
+        conditions.push(eq(notes.folderId, options.folderId));
+      }
+    }
+
+    if (options.isPinned !== undefined) {
+      conditions.push(eq(notes.isPinned, options.isPinned));
+    }
+
+    if (options.isArchived !== undefined) {
+      if (options.isArchived) {
+        conditions.push(isNotNull(notes.archivedAt));
+      } else {
+        conditions.push(isNull(notes.archivedAt));
+      }
+    }
+
+    const sortCol =
+      options.sort === 'created'
+        ? notes.createdAt
+        : options.sort === 'title'
+        ? notes.title
+        : notes.updatedAt;
+
+    const orderFn = options.order === 'asc' ? asc : desc;
+
+    const results = await db.query.notes.findMany({
+      where: and(...conditions),
+      orderBy: [orderFn(sortCol)],
+      limit: options.limit || 50,
+      offset: options.offset || 0,
+      with: {
+        folder: true,
+        noteTags: {
+          with: {
+            tag: true,
+          },
+        },
+      },
+    });
+
+    let mapped = results.map((n) => ({
+      ...n,
+      tags: n.noteTags.map((nt) => nt.tag),
+    }));
+
+    if (options.tagId) {
+      mapped = mapped.filter((n) => n.tags.some((t) => t.id === options.tagId));
+    }
+
+    return mapped;
+  }
+
+  static async getRevisions(userId: string, noteId: string) {
+    const note = await db.query.notes.findFirst({
+      where: and(eq(notes.id, noteId), eq(notes.ownerId, userId), isNull(notes.deletedAt)),
+    });
+    if (!note) {
+      throw ApiError.notFound('Note not found.');
+    }
+
+    return db.query.noteRevisions.findMany({
+      where: eq(noteRevisions.noteId, noteId),
+      orderBy: [desc(noteRevisions.version)],
+      limit: 30,
+    });
+  }
+
+  static async rollbackRevision(userId: string, noteId: string, revisionId: string) {
+    const note = await db.query.notes.findFirst({
+      where: and(eq(notes.id, noteId), eq(notes.ownerId, userId), isNull(notes.deletedAt)),
+    });
+    if (!note) {
+      throw ApiError.notFound('Note not found.');
+    }
+
+    const revision = await db.query.noteRevisions.findFirst({
+      where: and(eq(noteRevisions.id, revisionId), eq(noteRevisions.noteId, noteId)),
+    });
+    if (!revision) {
+      throw ApiError.notFound('Revision snapshot not found.');
+    }
+
+    const nextVersion = note.version + 1;
+    const [updated] = await db
+      .update(notes)
+      .set({
+        title: revision.titleSnapshot,
+        content: revision.contentSnapshot,
+        plainText: revision.plainTextSnapshot,
+        version: nextVersion,
+        updatedAt: new Date(),
+      })
+      .where(and(eq(notes.id, noteId), eq(notes.ownerId, userId)))
+      .returning();
+
+    await db.insert(noteRevisions).values({
+      id: `rev_${crypto.randomUUID()}`,
+      noteId,
+      version: nextVersion,
+      titleSnapshot: revision.titleSnapshot,
+      contentSnapshot: revision.contentSnapshot,
+      plainTextSnapshot: revision.plainTextSnapshot,
+      createdBy: userId,
+    });
+
+    return this.getNoteById(userId, updated.id);
+  }
+
+  static async restoreNote(userId: string, noteId: string) {
+    const existing = await db.query.notes.findFirst({
+      where: and(eq(notes.id, noteId), eq(notes.ownerId, userId)),
+    });
+    if (!existing) {
+      throw ApiError.notFound('Note not found.');
+    }
+
+    const [restored] = await db
+      .update(notes)
+      .set({ deletedAt: null, updatedAt: new Date() })
+      .where(and(eq(notes.id, noteId), eq(notes.ownerId, userId)))
+      .returning();
+
+    return this.getNoteById(userId, restored.id);
+  }
+
+  static async duplicateNote(
+    userId: string,
+    noteId: string,
+    options: { newTitle?: string; copyTags?: boolean; targetFolderId?: string | null } = {}
+  ) {
+    const sourceNote = await this.getNoteById(userId, noteId);
+    if (!sourceNote) {
+      throw ApiError.notFound('Note not found.');
+    }
+
+    const title = options.newTitle?.trim() || `${sourceNote.title} (Copy)`;
+    const folderId = options.targetFolderId !== undefined ? options.targetFolderId : sourceNote.folderId;
+    const copyTags = options.copyTags ?? true;
+    const tagIds = copyTags && sourceNote.tags ? sourceNote.tags.map((t) => t.id) : [];
+
+    const newNote = await this.createNote(userId, {
+      title,
+      content: sourceNote.content,
+      plainText: sourceNote.plainText,
+      folderId,
+      contentFormat: sourceNote.contentFormat,
+      isPinned: false,
+      tagIds,
+    });
+
+    return newNote;
+  }
+
+  static async batchUpdateNotes(
+    userId: string,
+    input: {
+      noteIds: string[];
+      action: 'archive' | 'unarchive' | 'move_folder' | 'trash';
+      folderId?: string | null;
+    }
+  ) {
+    if (!input.noteIds || !Array.isArray(input.noteIds) || input.noteIds.length === 0) {
+      throw ApiError.badRequest('noteIds must be a non-empty array of strings.');
+    }
+
+    if (input.action === 'move_folder' && input.folderId) {
+      const folder = await db.query.folders.findFirst({
+        where: and(eq(folders.id, input.folderId), eq(folders.ownerId, userId)),
+      });
+      if (!folder) {
+        throw ApiError.badRequest('Target folder not found.');
+      }
+    }
+
+    const conditions = and(
+      inArray(notes.id, input.noteIds),
+      eq(notes.ownerId, userId)
+    );
+
+    const updateData: Record<string, any> = { updatedAt: new Date() };
+
+    if (input.action === 'archive') {
+      updateData.archivedAt = new Date();
+    } else if (input.action === 'unarchive') {
+      updateData.archivedAt = null;
+    } else if (input.action === 'move_folder') {
+      updateData.folderId = input.folderId || null;
+    } else if (input.action === 'trash') {
+      updateData.deletedAt = new Date();
+    } else {
+      throw ApiError.badRequest(`Unknown batch action: ${input.action}`);
+    }
+
+    const updatedRows = await db
+      .update(notes)
+      .set(updateData)
+      .where(conditions)
+      .returning({ id: notes.id });
+
+    return {
+      success: true,
+      count: updatedRows.length,
+      action: input.action,
+      updatedIds: updatedRows.map((r) => r.id),
+    };
+  }
+}
+
