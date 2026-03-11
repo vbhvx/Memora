@@ -477,3 +477,40 @@ The AI layer should perform three main operations: title generation, summarizati
 
 AI output must be treated as a suggestion requiring validation and, for changes to user data, explicit approval.
 
+### 8.1 Title generation
+
+Given a note's title and content, generate a clear, concise title that reflects its central subject.
+
+Requirements:
+
+- Preserve the underlying meaning.
+- Avoid generic titles such as “Untitled Document” unless the content genuinely lacks useful context.
+- Avoid unsupported assumptions or invented entities.
+- Apply a configurable length limit.
+- Return a structured result.
+- Allow regeneration.
+- Preserve the existing title until the user accepts the suggestion.
+
+The UI should provide explicit actions such as **Suggest title** and **Use suggestion**.
+
+Never silently replace an established title when the user runs a summary or action-extraction operation.
+
+### 8.2 Summarization
+
+Generate a concise summary that helps a user understand a long note without reading every paragraph.
+
+The summary should:
+
+- Preserve important facts, decisions, key arguments, and conclusions.
+- Highlight uncertainty or missing information where appropriate.
+- Distinguish statements in the source from interpretations introduced by the model.
+- Avoid adding facts that are absent from the note.
+- Adapt to a reasonable target length.
+- Remain traceable to the source note.
+
+For sufficiently long content, use a documented chunking or hierarchical summarization strategy if necessary. Do not simply truncate arbitrary text in a way that systematically removes important conclusions near the end.
+
+Store generated summaries with their source note version. A summary created from revision 4 should not automatically be treated as current after revision 5 changes the note substantially.
+
+The user must be able to regenerate or dismiss the summary.
+
