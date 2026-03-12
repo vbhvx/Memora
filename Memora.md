@@ -514,3 +514,78 @@ Store generated summaries with their source note version. A summary created from
 
 The user must be able to regenerate or dismiss the summary.
 
+### 8.3 Action-item extraction
+
+Identify potential tasks from a note and return structured results.
+
+For example, the note might contain:
+
+> Review the API documentation, ask Priya to verify the permission rules, and submit the report by Friday.
+
+The model could return three proposed actions, including a potential assignee or due date only where the source supports it.
+
+Expected output schema:
+
+```json
+{
+  "items": [
+    {
+      "title": "Review the API documentation",
+      "description": null,
+      "assigneeName": null,
+      "dueDateText": null,
+      "confidence": 0.96,
+      "sourceExcerpt": "Review the API documentation"
+    },
+    {
+      "title": "Verify the permission rules",
+      "description": null,
+      "assigneeName": "Priya",
+      "dueDateText": null,
+      "confidence": 0.88,
+      "sourceExcerpt": "ask Priya to verify the permission rules"
+    },
+    {
+      "title": "Submit the report",
+      "description": null,
+      "assigneeName": null,
+      "dueDateText": "by Friday",
+      "confidence": 0.92,
+      "sourceExcerpt": "submit the report by Friday"
+    }
+  ]
+}
+```
+
+The example is illustrative; model-generated confidence values are not calibrated probabilities unless independently evaluated.
+
+Rules:
+
+- Do not invent an assignee.
+- Do not silently convert an ambiguous phrase into a fixed calendar date.
+- Treat relative dates according to an explicit reference date and timezone.
+- Preserve source excerpts so users can verify why an action was suggested.
+- Allow users to remove, edit, approve, or create tasks from individual suggestions.
+- Do not create duplicate tasks when an operation is retried.
+- Keep unapproved suggestions separate from the active task list.
+
+If a note says “we should look into this sometime,” the model must not automatically invent a specific owner and deadline.
+
+### 8.4 Structured output validation
+
+Use the AI provider's structured-output feature when available, or validate returned JSON using a strict runtime schema.
+
+Validate:
+
+- Required fields
+- Allowed string lengths
+- Valid output types
+- Allowed collection sizes
+- Dates and timestamps
+- Enum values
+- Required references to the source note or revision
+
+Treat model output as untrusted input. Valid JSON does not automatically mean the output is factually correct, authorized, or safe to apply.
+
+Reject malformed output, normalize accepted fields, and display a recoverable error if the AI service returns invalid or incomplete data.
+
