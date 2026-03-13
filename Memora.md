@@ -589,3 +589,34 @@ Treat model output as untrusted input. Valid JSON does not automatically mean th
 
 Reject malformed output, normalize accepted fields, and display a recoverable error if the AI service returns invalid or incomplete data.
 
+### 8.5 Source versioning
+
+Every AI result should be associated with the source version used to generate it.
+
+If the note changes while processing is in progress:
+
+- Preserve the updated note.
+- Keep the generated result associated with its original source version.
+- Warn the user that the result may be stale.
+- Allow a new request to process the latest revision.
+
+Do not overwrite newer note content with a delayed AI response.
+
+### 8.6 AI failure handling
+
+Handle:
+
+- Provider timeouts
+- Rate limits
+- Authentication errors
+- Invalid model output
+- Unsupported content
+- Oversized input
+- Temporary service outages
+- User cancellation where supported
+- Duplicate requests
+
+Use bounded retries only for appropriate transient failures. Respect provider rate limits and avoid retry loops that amplify cost or load.
+
+Basic editing, searching, and sharing must remain functional if the AI service is unavailable.
+
