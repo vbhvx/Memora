@@ -620,3 +620,26 @@ Use bounded retries only for appropriate transient failures. Respect provider ra
 
 Basic editing, searching, and sharing must remain functional if the AI service is unavailable.
 
+### 8.7 AI privacy
+
+Before sending note content to an external AI service, make the processing behavior clear to the user.
+
+Requirements:
+
+- AI requests must originate from the server.
+- Send only the relevant text needed for the requested operation.
+- Do not log full note contents, prompts, or returned private text unnecessarily.
+- Avoid using external AI processing for notes explicitly excluded by the user's AI preferences.
+- Disclose relevant provider processing and retention terms through an accurate privacy notice.
+- Do not claim that AI input is never retained unless the provider's actual terms and configuration support that claim.
+- Provide a way to delete stored AI results where applicable.
+- Keep authorization checks independent of model decisions.
+
+AI-generated titles, summaries, and action items should never cause a note to become public or change sharing permissions.
+
+## 9. Frictionless Sharing and Collaboration
+
+A key differentiator is letting a user share a note without forcing every recipient to create an account.
+
+However, reduced account friction must not turn private notes into publicly discoverable information.
+
