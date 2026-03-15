@@ -643,3 +643,34 @@ A key differentiator is letting a user share a note without forcing every recipi
 
 However, reduced account friction must not turn private notes into publicly discoverable information.
 
+### 9.1 Share-link creation
+
+The note owner can create a link with an explicit access policy.
+
+Recommended settings:
+
+- Permission: View, Comment, or Edit
+- Expiration: optional date or time
+- Revoke access: immediate
+- Guest access: enabled or disabled
+- Optional collaborator identity requirements where supported
+
+The initial release should prioritize view-only guest sharing. Commenting and editing can be implemented as explicit additional permissions when the necessary abuse protections and conflict handling are ready.
+
+### 9.2 Share-token security
+
+Use a cryptographically secure random token with sufficient entropy.
+
+Requirements:
+
+- Store only a hash of the usable share token.
+- Return the usable token only when creating or revealing the link through an authorized flow.
+- Do not allow token enumeration.
+- Use HTTPS for share URLs.
+- Check expiration and revocation on every protected request.
+- Avoid placing private note content in URLs.
+- Avoid leaking tokens through analytics, application logs, or error messages.
+- Use appropriate `Referrer-Policy` and related response headers to reduce accidental token disclosure.
+
+Where feasible, prevent search engines from indexing shared-note pages. Do not treat `noindex` as an access-control mechanism.
+
