@@ -674,3 +674,43 @@ Requirements:
 
 Where feasible, prevent search engines from indexing shared-note pages. Do not treat `noindex` as an access-control mechanism.
 
+### 9.3 Guest access
+
+A guest should be able to open a valid view-only link and read the authorized note without creating a full account.
+
+The guest must not gain access to:
+
+- The owner's other notes
+- The owner's folder hierarchy
+- Private tags or dashboard data
+- The owner's account settings
+- Unrelated tasks or revisions
+- Note-management APIs unrelated to that share
+
+A guest link must represent a deliberately granted capability to access a particular resource, not a substitute for a full authenticated account.
+
+If comments or guest editing are enabled, use appropriate rate limits and input validation, and identify guest activity accurately rather than presenting guest-entered names as verified identities.
+
+### 9.4 Revocation and expiration
+
+If the owner revokes a share, subsequent requests using that token must fail.
+
+If a share expires, the application must refuse further access even if a browser has a stale UI or cached state.
+
+Do not rely solely on removing a link from the owner's share-management screen.
+
+Define caching headers carefully so private note content is not accidentally retained in shared caches after permission changes.
+
+### 9.5 Collaboration conflicts
+
+Two people editing the same note can cause lost updates if the application uses last-write-wins behavior without detection.
+
+For the initial implementation:
+
+- Include a note revision or version in edit requests.
+- Reject stale updates with a documented conflict response.
+- Preserve the current editor's unsaved content.
+- Provide a safe recovery or manual merge path.
+
+Real-time collaborative editing using operational transformation, CRDTs, or a dedicated collaboration service can be considered later. It is not required to validate the initial product.
+
