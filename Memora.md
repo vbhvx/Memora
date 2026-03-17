@@ -714,3 +714,70 @@ For the initial implementation:
 
 Real-time collaborative editing using operational transformation, CRDTs, or a dedicated collaboration service can be considered later. It is not required to validate the initial product.
 
+## 10. API Design
+
+Expose a consistent API under `/api/v1`. Enforce authentication and authorization on the server.
+
+### 10.1 Suggested endpoints
+
+**Notes**
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/api/v1/notes` | List accessible notes |
+| POST | `/api/v1/notes` | Create a note |
+| GET | `/api/v1/notes/:noteId` | Retrieve a note |
+| PATCH | `/api/v1/notes/:noteId` | Update permitted note fields |
+| DELETE | `/api/v1/notes/:noteId` | Delete or trash a note |
+
+**Organization**
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/api/v1/folders` | List folders |
+| POST | `/api/v1/folders` | Create a folder |
+| PATCH | `/api/v1/folders/:folderId` | Rename or update a folder |
+| DELETE | `/api/v1/folders/:folderId` | Delete a folder according to the defined policy |
+| GET | `/api/v1/tags` | List tags |
+| POST | `/api/v1/tags` | Create a tag |
+| PUT | `/api/v1/notes/:noteId/tags` | Replace the note's assigned tags |
+
+**Search**
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/api/v1/search?q=...` | Search authorized notes |
+
+**AI operations**
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| POST | `/api/v1/notes/:noteId/ai/title` | Generate a title suggestion |
+| POST | `/api/v1/notes/:noteId/ai/summary` | Generate a summary |
+| POST | `/api/v1/notes/:noteId/ai/actions` | Extract proposed action items |
+| POST | `/api/v1/tasks/from-suggestions` | Create tasks from approved suggestions |
+
+**Tasks**
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/api/v1/tasks` | List tasks |
+| POST | `/api/v1/tasks` | Create a task manually |
+| PATCH | `/api/v1/tasks/:taskId` | Update a task |
+| DELETE | `/api/v1/tasks/:taskId` | Delete a task |
+
+**Sharing**
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| POST | `/api/v1/notes/:noteId/shares` | Create a share link |
+| GET | `/api/v1/notes/:noteId/shares` | List active shares for the owner |
+| PATCH | `/api/v1/notes/:noteId/shares/:shareId` | Update supported share settings |
+| DELETE | `/api/v1/notes/:noteId/shares/:shareId` | Revoke a share |
+| GET | `/api/v1/shared/:token` | Retrieve a permitted shared note |
+| POST | `/api/v1/shared/:token/comments` | Create a comment if commenting is enabled |
+
+Do not include a usable share token in ordinary list responses unless the owner explicitly requests it through an appropriate authorized flow.
+
+The precise guest URL structure should be selected and implemented consistently. The endpoint examples above are logical API contracts, not a requirement to expose raw secrets through every route.
+
