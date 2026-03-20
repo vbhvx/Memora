@@ -781,3 +781,50 @@ Do not include a usable share token in ordinary list responses unless the owner 
 
 The precise guest URL structure should be selected and implemented consistently. The endpoint examples above are logical API contracts, not a requirement to expose raw secrets through every route.
 
+### 10.2 Request validation
+
+Validate path parameters, query parameters, headers, and request bodies on the server.
+
+Reject:
+
+- Missing or empty note titles where a title is required.
+- Unsupported editor-format or status values.
+- Oversized note content or AI requests.
+- Invalid note, folder, or tag IDs.
+- Tags or folders owned by another user.
+- Attempts to overwrite immutable or server-controlled fields.
+- Invalid share permissions or expiration settings.
+- Expired or revoked guest tokens.
+- Malformed AI output.
+- Duplicate task-creation requests when an idempotency mechanism is used.
+
+Set practical limits for note length, request size, page size, comments, and AI-generated result counts.
+
+The frontend may perform the same validation to improve usability, but frontend checks are not a security boundary.
+
+### 10.3 Error responses
+
+Use a consistent error representation:
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "The request contains invalid fields.",
+    "details": [
+      {
+        "field": "title",
+        "code": "TOO_SHORT"
+      }
+    ],
+    "requestId": "req_example"
+  }
+}
+```
+
+Use appropriate HTTP status codes for successful operations, malformed requests, unauthenticated calls, forbidden actions, missing or intentionally concealed resources, conflicts, rate limits, and unexpected failures.
+
+Avoid returning stack traces, database exceptions, full prompts, provider credentials, private note content, or usable share tokens in error responses.
+
+Document whether inaccessible resources intentionally return `404 Not Found` rather than `403 Forbidden` to prevent resource enumeration.
+
