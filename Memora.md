@@ -828,3 +828,23 @@ Avoid returning stack traces, database exceptions, full prompts, provider creden
 
 Document whether inaccessible resources intentionally return `404 Not Found` rather than `403 Forbidden` to prevent resource enumeration.
 
+### 10.4 API documentation
+
+Document the implemented API using OpenAPI 3.x or an equivalent maintained specification.
+
+Include:
+
+- Endpoints and HTTP methods
+- Request and response schemas
+- Authentication requirements
+- Permission requirements
+- Validation constraints
+- Pagination and search behavior
+- Share-token and expiration behavior
+- AI operation parameters and failure modes
+- Representative error responses
+
+The documentation must match the behavior of the running application.
+
+## 11. Frontend Implementation
+
