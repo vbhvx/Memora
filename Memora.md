@@ -848,3 +848,33 @@ The documentation must match the behavior of the running application.
 
 ## 11. Frontend Implementation
 
+### 11.1 Editor
+
+Implement a clean note editor with:
+
+- Title input
+- Rich-text content editing
+- Headings and lists
+- Links and code blocks
+- Clear save status
+- Folder and tag selection
+- Pin and archive controls
+- AI actions
+- Sharing settings
+
+Render user-generated content safely. Sanitize or safely render HTML-like content and restrict unsupported editor nodes or attributes where needed.
+
+### 11.2 AI interface
+
+AI output should be presented as a reviewable suggestion rather than immediately replacing existing content.
+
+**Title suggestion:** Display the proposed title with actions to apply, edit, or dismiss it.
+
+**Summary:** Display the summary separately from the original note. Allow copying or saving it as a separate summary field or content block, based on the chosen data model.
+
+**Action extraction:** Display individual proposed tasks with checkboxes or review controls, editable fields, and explicit task-creation actions.
+
+Show a useful state during processing, and prevent duplicate submissions where possible.
+
+If AI generation fails, preserve the note and allow retrying the operation.
+
