@@ -878,3 +878,33 @@ Show a useful state during processing, and prevent duplicate submissions where p
 
 If AI generation fails, preserve the note and allow retrying the operation.
 
+### 11.3 Search interface
+
+Provide a responsive search field with debounced requests and a clear results state.
+
+Highlight relevant excerpts where safe and practical. Make it easy to open a result and return to the previous query.
+
+Never display another user's private note content in search suggestions, result previews, or metadata.
+
+### 11.4 Sharing interface
+
+Show the owner:
+
+- Existing active share links
+- Permission for each link
+- Expiration state
+- Creation time
+- Revocation control
+
+Explain the difference between view, comment, and edit access. Make it clear that anyone possessing an active guest link may be able to use the permissions granted by that link.
+
+For guests, provide a simple reading experience that does not require unrelated account setup.
+
+### 11.5 Accessibility and responsive design
+
+Support keyboard navigation, meaningful labels, proper focus management, accessible status messages, and sufficient contrast.
+
+Provide usable layouts on desktop, tablet, and mobile.
+
+Make saving, copying, dismissing, applying suggestions, and revoking shares understandable without relying exclusively on icons or color.
+
