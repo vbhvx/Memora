@@ -908,3 +908,14 @@ Provide usable layouts on desktop, tablet, and mobile.
 
 Make saving, copying, dismissing, applying suggestions, and revoking shares understandable without relying exclusively on icons or color.
 
+## 12. Security and Privacy Requirements
+
+### 12.1 Authentication and ownership
+
+- Use a maintained authentication library.
+- Protect authenticated routes.
+- Validate the current user's identity on each protected request.
+- Enforce note ownership on reads, updates, deletes, searches, and AI operations.
+- Invalidate relevant sessions appropriately on logout.
+- Keep secrets server-side.
+
