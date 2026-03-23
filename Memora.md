@@ -919,3 +919,23 @@ Make saving, copying, dismissing, applying suggestions, and revoking shares unde
 - Invalidate relevant sessions appropriately on logout.
 - Keep secrets server-side.
 
+### 12.2 Authorization
+
+- Enforce permissions for every note and task operation.
+- Prevent insecure direct object reference vulnerabilities.
+- Ensure folders and tags cannot be used to access another owner's data.
+- Prevent an authorized guest link from granting broader access than specified.
+- Check share expiration and revocation on every protected request.
+- Do not infer identity from a guest-provided name or email address.
+- Prevent task-creation and AI endpoints from bypassing note ownership checks.
+
+### 12.3 Input and output safety
+
+- Use strict runtime schemas.
+- Use parameterized database operations or safe ORM operations.
+- Sanitize untrusted content before any HTML rendering.
+- Restrict request sizes and expensive operations.
+- Validate generated AI output before storage or use.
+- Avoid unsafe dynamic code execution or rendering.
+- Avoid placing sensitive content in URLs.
+
