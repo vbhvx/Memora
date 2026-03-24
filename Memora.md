@@ -939,3 +939,29 @@ Make saving, copying, dismissing, applying suggestions, and revoking shares unde
 - Avoid unsafe dynamic code execution or rendering.
 - Avoid placing sensitive content in URLs.
 
+### 12.4 AI-specific security
+
+Notes may include third-party documents, code snippets, pasted emails, or text that attempts to manipulate an AI model.
+
+Treat note content as untrusted input rather than instructions that can override application policy.
+
+The model must not decide whether a user is authorized to view, edit, share, or delete a note. Authorization belongs to the application.
+
+Do not provide AI tools with unrestricted database access or arbitrary execution capabilities for these basic note-processing features.
+
+### 12.5 Rate limits and abuse prevention
+
+Apply appropriate limits to:
+
+- Authentication operations
+- Search requests
+- AI generation requests
+- Guest share-link access
+- Comment creation
+- Share-link creation
+- Large content submissions
+
+Apply per-user or per-session limits where possible, alongside broader resource-protection limits.
+
+Limit AI input and output sizes and provide transparent failure messages when a request exceeds supported limits.
+
