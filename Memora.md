@@ -965,3 +965,24 @@ Apply per-user or per-session limits where possible, alongside broader resource-
 
 Limit AI input and output sizes and provide transparent failure messages when a request exceeds supported limits.
 
+### 12.6 Logging and secrets
+
+- Do not commit real API keys.
+- Provide a safe `.env.example`.
+- Redact authentication cookies, share tokens, authorization headers, and secrets.
+- Avoid full note text in logs.
+- Use request IDs for diagnosing errors without exposing sensitive data.
+- Configure production CORS narrowly when cross-origin access is needed.
+- Use HTTPS for production traffic.
+- Apply a least-privilege database account.
+
+### 12.7 Data deletion and retention
+
+Define what happens to notes, revisions, comments, tasks, summaries, and processing records when a user deletes a note or account.
+
+Revoke related share links as part of the deletion policy.
+
+Where external AI services have processed note content, explain that deleting local application data does not necessarily delete provider-side records unless the provider's supported mechanisms and terms permit that outcome.
+
+Document the actual retention policy. Do not promise end-to-end encryption, zero retention, or permanent deletion from every system unless those properties have been engineered and verified.
+
