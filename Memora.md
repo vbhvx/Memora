@@ -986,3 +986,15 @@ Where external AI services have processed note content, explain that deleting lo
 
 Document the actual retention policy. Do not promise end-to-end encryption, zero retention, or permanent deletion from every system unless those properties have been engineered and verified.
 
+## 13. Reliability and Performance
+
+### 13.1 Autosave reliability
+
+Use a debounce interval appropriate for a note editor, such as approximately 500–1,000 milliseconds, and save when the editor loses focus where appropriate.
+
+The exact interval should be configurable based on observed behavior.
+
+Use request sequencing or version-based concurrency control so late responses cannot incorrectly mark stale content as saved.
+
+If the user closes or navigates away while changes are pending, apply an appropriate flush or unsaved-change warning strategy.
+
