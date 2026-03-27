@@ -998,3 +998,40 @@ Use request sequencing or version-based concurrency control so late responses ca
 
 If the user closes or navigates away while changes are pending, apply an appropriate flush or unsaved-change warning strategy.
 
+### 13.2 Database and search performance
+
+- Add indexes matching actual query patterns.
+- Paginate notes and tasks.
+- Avoid N+1 queries.
+- Use bounded result counts.
+- Update search fields efficiently.
+- Avoid loading all note content into the dashboard.
+- Keep search access scoped to the requesting user.
+
+### 13.3 AI efficiency
+
+- Call AI services only when required by user actions or explicitly enabled preferences.
+- Set maximum input and output sizes.
+- Use appropriate request timeouts.
+- Avoid reprocessing unchanged content where cached results remain valid and the provider/model configuration is compatible.
+- Record source version and relevant processing metadata.
+- Use bounded retries for transient failures.
+- Handle provider rate limits and usage costs.
+
+Do not claim a specific response latency, cost per note, or throughput without measurements.
+
+### 13.4 Error recovery
+
+Test how the system behaves when:
+
+- A note save fails.
+- A browser disconnects during editing.
+- An AI request times out.
+- A generated result arrives after the note has changed.
+- A share expires during use.
+- A share is revoked while the guest page remains open.
+- A task creation request is repeated.
+- Two editors save conflicting changes.
+
+Core note data must remain recoverable and should not be lost because an optional AI request failed.
+
