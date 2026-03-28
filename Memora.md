@@ -1035,3 +1035,21 @@ Test how the system behaves when:
 
 Core note data must remain recoverable and should not be lost because an optional AI request failed.
 
+## 14. Testing Strategy
+
+Testing must cover normal usage, invalid input, privacy boundaries, and the interaction between AI suggestions and persisted data.
+
+### 14.1 Unit tests
+
+Test:
+
+- Request-validation schemas
+- Note and task business rules
+- Ownership and permission policies
+- Share-token validation
+- Share expiration and revocation
+- Search query normalization
+- AI output schemas
+- Task deduplication logic
+- Note version and conflict handling
+
