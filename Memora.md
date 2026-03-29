@@ -1053,3 +1053,44 @@ Test:
 - Task deduplication logic
 - Note version and conflict handling
 
+### 14.2 Integration tests
+
+Use a real test database or an equivalent environment that exercises actual constraints and query behavior.
+
+Test:
+
+- Note creation, retrieval, updating, and deletion
+- Folder and tag ownership
+- Search scoping
+- Note revision creation
+- Share creation and token validation
+- Guest access without a user account
+- Permission enforcement for every share level
+- Immediate revocation and expiration
+- AI service failure handling
+- AI output validation
+- Task creation from approved suggestions
+- Handling duplicate requests
+- Concurrent edit conflicts
+
+Use a mocked AI provider for deterministic tests, alongside contract tests for the adapter where practical. A mocked AI response alone does not verify the actual provider's availability, latency, or behavior.
+
+### 14.3 Security tests
+
+At a minimum, verify:
+
+1. User A cannot read User B's private notes.
+2. User A cannot modify or delete User B's notes.
+3. Search does not reveal inaccessible note titles or excerpts.
+4. A guest share does not reveal the owner's other data.
+5. A revoked link stops granting access.
+6. An expired link cannot be used.
+7. A view-only link cannot create comments or edit content.
+8. An edit or comment permission cannot be escalated through crafted requests.
+9. Folder and tag identifiers cannot bypass ownership checks.
+10. Unauthorized users cannot invoke AI processing on private notes.
+11. Malformed AI output cannot overwrite note content.
+12. Unsaved or stale AI results cannot overwrite a newer note revision.
+13. Invalid or excessive inputs are rejected safely.
+14. Logs and errors do not reveal secrets or unnecessary private text.
+
