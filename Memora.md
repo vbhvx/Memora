@@ -1094,3 +1094,79 @@ At a minimum, verify:
 13. Invalid or excessive inputs are rejected safely.
 14. Logs and errors do not reveal secrets or unnecessary private text.
 
+### 14.4 End-to-end tests
+
+Using Playwright or an equivalent tool, verify these complete workflows:
+
+1. Register or log in.
+2. Create and edit a note.
+3. Confirm the persisted content survives a reload.
+4. Organize the note into a folder and assign tags.
+5. Search for the note by title and content.
+6. Generate a title suggestion and accept it.
+7. Generate a summary and verify that the original content remains intact.
+8. Extract action items, review them, and create approved tasks.
+9. Create a view-only guest link and open it in a separate unauthenticated browser context.
+10. Verify that the guest cannot access other notes.
+11. Revoke the share link and verify that access is denied.
+12. Simulate a save failure and verify that the content remains recoverable.
+
+Add regression tests for every meaningful security or data-loss issue discovered during implementation.
+
+## 15. Repository Structure
+
+Use a maintainable structure along these lines, adjusted to the selected framework:
+
+```text
+notes-platform/
+├── src/
+│   ├── app/
+│   │   ├── dashboard/
+│   │   ├── notes/
+│   │   ├── search/
+│   │   ├── tasks/
+│   │   ├── shared/
+│   │   ├── settings/
+│   │   └── api/
+│   │       └── v1/
+│   ├── components/
+│   ├── features/
+│   │   ├── notes/
+│   │   ├── editor/
+│   │   ├── search/
+│   │   ├── organization/
+│   │   ├── ai-assistance/
+│   │   ├── tasks/
+│   │   └── sharing/
+│   ├── server/
+│   │   ├── auth/
+│   │   ├── authorization/
+│   │   ├── services/
+│   │   ├── repositories/
+│   │   ├── validation/
+│   │   ├── ai/
+│   │   └── errors/
+│   ├── db/
+│   │   ├── schema/
+│   │   ├── migrations/
+│   │   └── client.ts
+│   └── lib/
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   ├── security/
+│   └── e2e/
+├── docs/
+│   ├── architecture.md
+│   ├── api.md
+│   ├── ai-processing.md
+│   ├── sharing-security.md
+│   └── openapi.yaml
+├── scripts/
+├── .env.example
+├── README.md
+└── package.json
+```
+
+Separate presentation components, persistence logic, authorization policies, AI adapters, and business logic. Keep prompt templates and output schemas in dedicated locations so they can be reviewed and tested independently.
+
