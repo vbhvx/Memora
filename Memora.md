@@ -1170,3 +1170,17 @@ notes-platform/
 
 Separate presentation components, persistence logic, authorization policies, AI adapters, and business logic. Keep prompt templates and output schemas in dedicated locations so they can be reviewed and tested independently.
 
+## 16. Implementation Roadmap
+
+### Phase 1: Foundation and Core Notes
+
+- Inspect the repository, framework, current routes, dependencies, and available scripts.
+- Establish environment configuration and PostgreSQL connectivity.
+- Create the database schema and migrations.
+- Implement authentication.
+- Build note creation, reading, editing, and deletion.
+- Implement autosave and version-aware updates.
+- Add initial automated tests.
+
+**Exit criterion:** Users can safely create, edit, save, reload, and delete notes without needing AI functionality.
+
