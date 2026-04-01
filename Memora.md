@@ -1184,3 +1184,27 @@ Separate presentation components, persistence logic, authorization policies, AI 
 
 **Exit criterion:** Users can safely create, edit, save, reload, and delete notes without needing AI functionality.
 
+### Phase 2: Organization and Search
+
+- Implement folders and tags.
+- Add pinning and archiving.
+- Implement PostgreSQL full-text search.
+- Add search filters, sorting, and pagination.
+- Enforce ownership across every organization and search operation.
+- Add tests for inaccessible records and cross-user leakage.
+
+**Exit criterion:** Users can reliably organize and retrieve their own notes, and search cannot expose another user's private content.
+
+### Phase 3: AI Assistance
+
+- Implement the provider-agnostic AI adapter.
+- Add title generation.
+- Add summarization.
+- Add action-item extraction with validated structured outputs.
+- Associate AI results with the source note version.
+- Build review and approval interfaces.
+- Handle timeout, malformed output, and provider errors.
+- Test AI operations using deterministic fixtures.
+
+**Exit criterion:** AI operations create reviewable suggestions without silently modifying or corrupting existing notes.
+
