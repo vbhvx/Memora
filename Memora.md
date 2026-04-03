@@ -1208,3 +1208,39 @@ Separate presentation components, persistence logic, authorization policies, AI 
 
 **Exit criterion:** AI operations create reviewable suggestions without silently modifying or corrupting existing notes.
 
+### Phase 4: Task Management
+
+- Implement task persistence and task views.
+- Enable manual task creation.
+- Convert approved action suggestions into tasks.
+- Link tasks to their source notes.
+- Add status updates, optional deadlines, and priority.
+- Prevent duplicate creation on repeated requests.
+- Add tests for the complete note-to-task workflow.
+
+**Exit criterion:** Users can turn a note into actionable work and trace each generated task back to its source.
+
+### Phase 5: Sharing and Guest Access
+
+- Implement share-link creation.
+- Add explicit permission and expiration settings.
+- Generate and hash share tokens securely.
+- Implement the unauthenticated guest reading flow.
+- Add revocation and expiration enforcement.
+- Add commenting or editing only if those permission paths are fully implemented.
+- Test isolation, invalid tokens, revoked links, and unauthorized writes.
+
+**Exit criterion:** A user can share one note with a recipient who has no account without exposing unrelated private information.
+
+### Phase 6: Hardening and Product Quality
+
+- Complete responsive and accessibility improvements.
+- Add save-conflict recovery.
+- Improve empty, loading, and failure states.
+- Review API schemas and documentation.
+- Run security, integration, and end-to-end tests.
+- Verify production configuration and secret handling.
+- Remove unused code only after verifying that no required functionality depends on it.
+
+**Exit criterion:** Core workflows are reliable, security boundaries are tested, and known limitations are documented.
+
