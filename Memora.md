@@ -1244,3 +1244,19 @@ Separate presentation components, persistence logic, authorization policies, AI 
 
 **Exit criterion:** Core workflows are reliable, security boundaries are tested, and known limitations are documented.
 
+### Phase 7: Release Preparation
+
+- Verify database migrations from a clean environment.
+- Document environment variables and setup commands.
+- Verify production build and runtime behavior.
+- Configure logging, rate limits, and health checks.
+- Verify deletion and retention behavior.
+- Document AI processing and share-link security.
+- Produce a final implementation and verification report.
+
+**Exit criterion:** Another developer can configure, run, test, and understand the application without relying on undocumented steps.
+
+## 17. Acceptance Criteria
+
+The project is ready for submission only when the following can be demonstrated.
+
