@@ -1260,3 +1260,19 @@ Separate presentation components, persistence logic, authorization policies, AI 
 
 The project is ready for submission only when the following can be demonstrated.
 
+### Note management
+
+- A user can create, edit, save, and delete a note.
+- Changes persist across page reloads.
+- Save state is communicated accurately.
+- Failed saves preserve recoverable user content.
+- Concurrent edits do not silently overwrite newer content.
+- Folders, tags, pinning, and archiving operate according to the documented rules.
+
+### Search and retrieval
+
+- Search retrieves relevant notes by title and content.
+- Results support useful filters and pagination.
+- Private content is never exposed through search to an unauthorized user.
+- Deleted or inaccessible notes are excluded according to the documented policy.
+
