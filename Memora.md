@@ -1276,3 +1276,23 @@ The project is ready for submission only when the following can be demonstrated.
 - Private content is never exposed through search to an unauthorized user.
 - Deleted or inaccessible notes are excluded according to the documented policy.
 
+### AI processing
+
+- Title generation produces reviewable suggestions.
+- Summarization preserves the original note.
+- Action extraction returns validated structured results.
+- Tasks are created only after user approval.
+- AI failures do not break note reading, editing, or saving.
+- Results are associated with their source version.
+- AI provider keys remain on the server.
+- AI-processing privacy behavior is accurately disclosed.
+
+### Sharing
+
+- A user can create a view-only share link.
+- A permitted recipient can read the shared note without registering.
+- The recipient cannot access the owner's other notes or metadata outside the granted scope.
+- Expired and revoked links are rejected.
+- Guest access cannot be escalated through crafted requests.
+- The owner can identify and revoke active share links.
+
