@@ -1296,3 +1296,38 @@ The project is ready for submission only when the following can be demonstrated.
 - Guest access cannot be escalated through crafted requests.
 - The owner can identify and revoke active share links.
 
+### Engineering quality
+
+- Input validation is enforced on the server.
+- Database constraints and migrations work.
+- Authentication and authorization are tested.
+- API error responses are consistent.
+- Unit, integration, security, and end-to-end tests are available.
+- The project can be configured and run from the README.
+- Actual test results and known limitations are reported honestly.
+
+## 18. README and Developer Documentation
+
+Document:
+
+- Project purpose and core features
+- Architecture and component responsibilities
+- Technology stack
+- Prerequisites and local setup
+- Environment-variable reference
+- Database creation and migration commands
+- Development, lint, type-check, and build commands
+- Unit, integration, and end-to-end test commands
+- Search implementation
+- AI provider configuration and failure behavior
+- AI data-processing and privacy boundaries
+- Sharing permissions, token security, expiration, and revocation
+- API documentation
+- Deployment instructions
+- Data deletion and retention policy
+- Known limitations and planned improvements
+
+Provide `.env.example` with placeholders, not real credentials or API keys.
+
+Do not claim that the application has been deployed, independently audited, or verified against a real external AI provider unless those activities have actually been completed.
+
