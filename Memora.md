@@ -1331,3 +1331,50 @@ Provide `.env.example` with placeholders, not real credentials or API keys.
 
 Do not claim that the application has been deployed, independently audited, or verified against a real external AI provider unless those activities have actually been completed.
 
+## 19. Risks and Trade-offs
+
+**AI-generated inaccuracies:** Summaries can omit important context, and extracted actions can misinterpret ambiguous language. Mitigate this by preserving source content, displaying excerpts, validating output, and requiring approval.
+
+**Privacy leakage:** Note content can contain sensitive personal or professional information. Minimize data sent externally, enforce authorization, and disclose the actual AI-processing behavior.
+
+**Share-link exposure:** A guest link can be forwarded or copied. Use high-entropy secrets, scoped permissions, expiration where appropriate, revocation, and clear warnings about possession-based access.
+
+**Lost edits:** Autosave and simultaneous editing can create conflicts. Use revisions or version fields, preserve unsaved content, and avoid silent last-write-wins overwrites.
+
+**AI cost and latency:** Large notes and repeated processing can increase expense and delay. Apply input limits, explicit triggering, bounded retries, and appropriate caching tied to source versions.
+
+**Feature complexity:** Adding semantic search, real-time editing, deep folder hierarchies, and sophisticated collaboration at once can delay the core product. Ship reliable note management, search, AI suggestions, and guest viewing first.
+
+## 20. Final Verification Report
+
+At completion, produce a report that covers:
+
+| Area | Required evidence |
+|---|---|
+| Core notes | Tested create, edit, save, reload, and delete workflows |
+| Organization | Verified folders, tags, pinning, and archiving |
+| Search | Tested title and content search, filters, and access isolation |
+| AI title | Actual result handling and source-version behavior |
+| Summarization | Output validation and failure handling |
+| Action extraction | Structured output validation and approved task creation |
+| Sharing | Guest access, permissions, expiration, and revocation tests |
+| Security | Authorization checks, secret handling, and unresolved risks |
+| Database | Schema, constraints, migrations, and deletion policy |
+| Testing | Commands executed and actual results |
+| Documentation | Setup guide, API contract, and privacy disclosures |
+| Deployment | Actual deployment state and configuration requirements |
+| Final status | Ready for submission, blocked, or incomplete, with evidence |
+
+Explicitly distinguish tests that were executed from tests that merely exist. Identify failing tests, unsupported features, and unresolved risks.
+
+## Final Execution Instruction
+
+Inspect the existing repository before making changes. Preserve working functionality unless a change is necessary and justified. Implement the platform in the phases above, keeping the first release focused on reliable notes, useful search, AI-assisted organization, task extraction, and secure guest sharing.
+
+Prioritize data integrity, security boundaries, predictable API behavior, and a polished user workflow over unnecessary features. Validate the frontend and backend together, not merely through isolated mocks.
+
+Do not automatically replace note content with AI output. Do not force recipients to create accounts when using explicitly permitted guest links. Do not expose unrelated private data through sharing, search, task creation, or AI processing.
+
+Before declaring completion, run the actual available linting, type-checking, build, migration, unit, integration, security, and end-to-end commands. Report the results truthfully, including anything that could not be verified.
+
+The final deliverable must allow users to capture information quickly, find it later, understand it faster, turn approved ideas into action, and share individual notes with the right people without compromising the rest of their data.
