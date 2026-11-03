@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
+import { ClerkProvider } from '@clerk/nextjs';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -25,11 +26,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
+  const hasClerkKey = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+  const bodyContent = (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50 text-slate-900`}>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
+
+  if (hasClerkKey) {
+    return <ClerkProvider>{bodyContent}</ClerkProvider>;
+  }
+
+  return bodyContent;
 }

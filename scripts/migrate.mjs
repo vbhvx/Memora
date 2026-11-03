@@ -161,7 +161,10 @@ CREATE INDEX IF NOT EXISTS ai_jobs_user_idx ON ai_processing_jobs(user_id);
 export async function runMigrations(connString) {
   const target = connString || process.env.DATABASE_URL || 'postgres://localhost:5432/memora';
   console.log(`Connecting to ${target} for migration...`);
-  const pool = new Pool({ connectionString: target });
+  const isNeon = target.includes('neon.tech') || target.includes('sslmode=require');
+  const pool = isNeon
+    ? new Pool({ connectionString: target, ssl: { rejectUnauthorized: false } })
+    : new Pool({ connectionString: target });
   try {
     await pool.query(schemaSql);
     console.log(`✓ Migration completed successfully for ${target}`);

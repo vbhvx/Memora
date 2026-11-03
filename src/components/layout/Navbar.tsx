@@ -4,18 +4,18 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { UserButton } from '@clerk/nextjs';
 import {
   Plus,
   Search,
-  BookOpen,
   LogOut,
-  User as UserIcon,
   Sparkles,
 } from 'lucide-react';
 
 export function Navbar({ onNewNote }: { onNewNote?: () => void }) {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const hasClerk = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
   const handleLogout = async () => {
     await logout();
@@ -53,35 +53,44 @@ export function Navbar({ onNewNote }: { onNewNote?: () => void }) {
             </button>
 
             <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
-              <Link
-                href="/settings"
-                className="flex items-center gap-1.5 rounded-lg p-1.5 text-slate-600 hover:bg-slate-100"
-                title="Settings"
-              >
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-100 text-indigo-700 font-semibold text-xs">
-                  {user.name.charAt(0).toUpperCase()}
+              {hasClerk ? (
+                <div className="flex items-center gap-2">
+                  <UserButton />
+                  <span className="hidden md:inline text-xs font-medium text-slate-700">{user.name}</span>
                 </div>
-                <span className="hidden md:inline text-xs font-medium text-slate-700">{user.name}</span>
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-red-600"
-                title="Log Out"
-              >
-                <LogOut className="h-4 w-4" />
-              </button>
+              ) : (
+                <>
+                  <Link
+                    href="/settings"
+                    className="flex items-center gap-1.5 rounded-lg p-1.5 text-slate-600 hover:bg-slate-100"
+                    title="Settings"
+                  >
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-100 text-indigo-700 font-semibold text-xs">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="hidden md:inline text-xs font-medium text-slate-700">{user.name}</span>
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-red-600"
+                    title="Log Out"
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </button>
+                </>
+              )}
             </div>
           </>
         ) : (
           <div className="flex items-center gap-2">
             <Link
-              href="/login"
+              href={hasClerk ? '/sign-in' : '/login'}
               className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
             >
               Sign In
             </Link>
             <Link
-              href="/register"
+              href={hasClerk ? '/sign-up' : '/register'}
               className="rounded-lg bg-indigo-600 px-3.5 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
             >
               Get Started
@@ -92,4 +101,3 @@ export function Navbar({ onNewNote }: { onNewNote?: () => void }) {
     </header>
   );
 }
-
