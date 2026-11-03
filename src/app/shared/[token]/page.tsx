@@ -182,21 +182,21 @@ export default function SharedNotePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
+    <div className="min-h-screen bg-neutral-50 text-neutral-900 flex flex-col">
       {/* Top Banner disclosing permission & guest state */}
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur px-6 py-3 flex items-center justify-between">
+      <header className="sticky top-0 z-20 border-b border-neutral-200 bg-white/95 backdrop-blur px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
+          <div className="h-8 w-8 rounded-lg bg-black text-white flex items-center justify-center font-bold text-sm">
             M
           </div>
-          <span className="font-bold text-slate-900 tracking-tight">Memora</span>
-          <span className="text-slate-300">|</span>
-          <span className="text-xs text-slate-500">Shared Note</span>
+          <span className="font-bold text-neutral-900 tracking-tight">Memora</span>
+          <span className="text-neutral-300">|</span>
+          <span className="text-xs text-neutral-500">Shared Note</span>
         </div>
 
         {/* Permission Disclosure Badge */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 rounded-full bg-indigo-50 border border-indigo-200 px-3 py-1 text-xs font-semibold text-indigo-700">
+          <div className="flex items-center gap-1.5 rounded-full bg-neutral-100 border border-neutral-300 px-3 py-1 text-xs font-semibold text-neutral-900">
             {data.permission === 'view' && <Eye className="h-3.5 w-3.5" />}
             {data.permission === 'comment' && <MessageSquare className="h-3.5 w-3.5" />}
             {data.permission === 'edit' && <Edit3 className="h-3.5 w-3.5" />}
@@ -212,17 +212,17 @@ export default function SharedNotePage() {
           {data.permission === 'edit' && (
             <div className="text-xs">
               {saveStatus === 'saving' && (
-                <span className="text-amber-600 flex items-center gap-1">
+                <span className="text-neutral-600 flex items-center gap-1">
                   <Clock className="h-3 w-3 animate-spin" /> Saving...
                 </span>
               )}
               {saveStatus === 'saved' && (
-                <span className="text-emerald-600 flex items-center gap-1">
-                  <CheckCircle className="h-3 w-3" /> Saved
+                <span className="text-neutral-900 font-medium flex items-center gap-1">
+                  <CheckCircle className="h-3 w-3 text-neutral-800" /> Saved
                 </span>
               )}
               {saveStatus === 'conflict' && (
-                <span className="text-red-600 font-bold">Conflict detected!</span>
+                <span className="text-neutral-900 font-bold">Conflict detected!</span>
               )}
             </div>
           )}
@@ -231,7 +231,7 @@ export default function SharedNotePage() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-8 space-y-8">
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 shadow-xs space-y-6">
+        <div className="bg-white rounded-2xl border border-neutral-200 p-6 sm:p-10 shadow-xs space-y-6">
           {data.permission === 'edit' ? (
             /* Editable Mode */
             <div className="space-y-4">
@@ -239,23 +239,23 @@ export default function SharedNotePage() {
                 type="text"
                 value={editTitle}
                 onChange={(e) => handleEditChange(e.target.value, editContent)}
-                className="w-full text-2xl sm:text-3xl font-extrabold text-slate-900 border-none bg-transparent focus:outline-none"
+                className="w-full text-2xl sm:text-3xl font-extrabold text-neutral-900 border-none bg-transparent focus:outline-none"
               />
               <textarea
                 value={editContent}
                 onChange={(e) => handleEditChange(editTitle, e.target.value)}
                 rows={14}
-                className="w-full border border-slate-200 rounded-lg p-3 text-sm text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-sans"
+                className="w-full border border-neutral-300 rounded-lg p-3 text-sm text-neutral-900 focus:outline-none focus:ring-1 focus:ring-black font-sans"
               />
             </div>
           ) : (
             /* Read-Only Mode */
             <div className="space-y-4">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900">
                 {data.note.title}
               </h1>
               <div
-                className="prose prose-slate max-w-none text-slate-800 leading-relaxed"
+                className="prose prose-neutral max-w-none text-neutral-800 leading-relaxed"
                 dangerouslySetInnerHTML={{
                   __html: data.note.content || `<p>${data.note.plainText}</p>`,
                 }}
@@ -263,19 +263,19 @@ export default function SharedNotePage() {
             </div>
           )}
 
-          <div className="pt-6 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+          <div className="pt-6 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-400">
             <span>Last updated {new Date(data.note.updatedAt).toLocaleDateString()}</span>
             <span className="flex items-center gap-1">
-              <Shield className="h-3.5 w-3.5 text-slate-400" /> Secure Guest Access
+              <Shield className="h-3.5 w-3.5 text-neutral-400" /> Secure Guest Access
             </span>
           </div>
         </div>
 
         {/* Comment Section (If permission is comment or edit) */}
         {(data.permission === 'comment' || data.permission === 'edit') && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
-            <h3 className="font-bold text-slate-900 flex items-center gap-2 text-base">
-              <MessageSquare className="h-4 w-4 text-indigo-600" />
+          <div className="bg-white rounded-2xl border border-neutral-200 p-6 sm:p-8 shadow-xs space-y-6">
+            <h3 className="font-bold text-neutral-900 flex items-center gap-2 text-base">
+              <MessageSquare className="h-4 w-4 text-neutral-800" />
               <span>Comments ({data.comments?.length || 0})</span>
             </h3>
 
@@ -287,7 +287,7 @@ export default function SharedNotePage() {
                   placeholder="Your Name (optional)"
                   value={guestName}
                   onChange={(e) => setGuestName(e.target.value)}
-                  className="rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="rounded-lg border border-neutral-300 px-3 py-2 text-xs text-neutral-800 focus:outline-none focus:ring-1 focus:ring-black"
                 />
               </div>
               <div className="flex gap-2">
@@ -296,12 +296,12 @@ export default function SharedNotePage() {
                   placeholder="Add a comment or feedback..."
                   value={commentContent}
                   onChange={(e) => setCommentContent(e.target.value)}
-                  className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="flex-1 rounded-lg border border-neutral-300 px-3 py-2 text-xs text-neutral-800 focus:outline-none focus:ring-1 focus:ring-black"
                 />
                 <button
                   type="submit"
                   disabled={isPostingComment || !commentContent.trim()}
-                  className="rounded-lg bg-indigo-600 px-4 py-2 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 transition flex items-center gap-1"
+                  className="rounded-lg bg-black px-4 py-2 text-xs font-semibold text-white hover:bg-neutral-800 disabled:opacity-50 transition flex items-center gap-1"
                 >
                   <Send className="h-3 w-3" />
                   <span>Send</span>

@@ -121,16 +121,16 @@ export default function DashboardPage() {
     <AppShell>
       <div className="max-w-6xl mx-auto px-4 py-8 sm:px-6 space-y-8">
         {/* Welcome & Quick Capture Banner */}
-        <div className="rounded-2xl bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 p-6 sm:p-8 text-white shadow-md relative overflow-hidden">
+        <div className="rounded-2xl bg-black border border-neutral-800 p-6 sm:p-8 text-white shadow-sm relative overflow-hidden">
           <div className="relative z-10 max-w-2xl space-y-3">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/30 px-3 py-1 text-xs font-medium text-indigo-200 backdrop-blur-sm border border-indigo-400/20">
-              <Sparkles className="h-3.5 w-3.5" />
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-neutral-900 px-3 py-1 text-xs font-medium text-neutral-300 border border-neutral-700">
+              <Sparkles className="h-3.5 w-3.5 text-neutral-200" />
               <span>AI-Powered Knowledge & Action Management</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
               Welcome back, {user.name}
             </h1>
-            <p className="text-sm text-indigo-200">
+            <p className="text-sm text-neutral-400">
               Capture thoughts once, find them when you need them, and turn ideas into actionable tasks.
             </p>
 
@@ -141,12 +141,12 @@ export default function DashboardPage() {
                 placeholder="Quick capture: Type a thought, meeting, or idea..."
                 value={quickTitle}
                 onChange={(e) => setQuickTitle(e.target.value)}
-                className="flex-1 rounded-xl bg-white/10 px-4 py-2.5 text-sm text-white placeholder-indigo-200/60 border border-white/20 focus:outline-none focus:bg-white/20 focus:border-white/40 backdrop-blur-sm"
+                className="flex-1 rounded-xl bg-neutral-900 border border-neutral-700 px-4 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-neutral-400"
               />
               <button
                 type="submit"
                 disabled={isSubmitting || !quickTitle.trim()}
-                className="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-indigo-900 shadow hover:bg-indigo-50 transition disabled:opacity-50"
+                className="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-black shadow-sm hover:bg-neutral-200 transition disabled:opacity-50"
               >
                 Capture Note
               </button>
@@ -156,33 +156,33 @@ export default function DashboardPage() {
 
         {/* Stats Row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="rounded-xl bg-white border border-slate-200 p-4 shadow-xs">
-            <div className="flex items-center gap-2 text-slate-500 text-xs font-medium">
-              <FileText className="h-4 w-4 text-indigo-600" />
+          <div className="rounded-xl bg-white border border-neutral-200 p-4 shadow-xs">
+            <div className="flex items-center gap-2 text-neutral-500 text-xs font-medium">
+              <FileText className="h-4 w-4 text-neutral-900" />
               <span>Total Notes</span>
             </div>
-            <div className="text-2xl font-bold text-slate-900 mt-2">{notes.length}</div>
+            <div className="text-2xl font-bold text-neutral-900 mt-2">{notes.length}</div>
           </div>
-          <div className="rounded-xl bg-white border border-slate-200 p-4 shadow-xs">
-            <div className="flex items-center gap-2 text-slate-500 text-xs font-medium">
-              <Pin className="h-4 w-4 text-amber-500" />
+          <div className="rounded-xl bg-white border border-neutral-200 p-4 shadow-xs">
+            <div className="flex items-center gap-2 text-neutral-500 text-xs font-medium">
+              <Pin className="h-4 w-4 text-neutral-900" />
               <span>Pinned Notes</span>
             </div>
-            <div className="text-2xl font-bold text-slate-900 mt-2">{pinnedNotes.length}</div>
+            <div className="text-2xl font-bold text-neutral-900 mt-2">{pinnedNotes.length}</div>
           </div>
-          <div className="rounded-xl bg-white border border-slate-200 p-4 shadow-xs">
-            <div className="flex items-center gap-2 text-slate-500 text-xs font-medium">
-              <CheckSquare className="h-4 w-4 text-emerald-600" />
+          <div className="rounded-xl bg-white border border-neutral-200 p-4 shadow-xs">
+            <div className="flex items-center gap-2 text-neutral-500 text-xs font-medium">
+              <CheckSquare className="h-4 w-4 text-neutral-900" />
               <span>Open Tasks</span>
             </div>
-            <div className="text-2xl font-bold text-slate-900 mt-2">{tasks.length}</div>
+            <div className="text-2xl font-bold text-neutral-900 mt-2">{tasks.length}</div>
           </div>
-          <div className="rounded-xl bg-white border border-slate-200 p-4 shadow-xs">
-            <div className="flex items-center gap-2 text-slate-500 text-xs font-medium">
-              <Share2 className="h-4 w-4 text-purple-600" />
+          <div className="rounded-xl bg-white border border-neutral-200 p-4 shadow-xs">
+            <div className="flex items-center gap-2 text-neutral-500 text-xs font-medium">
+              <Share2 className="h-4 w-4 text-neutral-900" />
               <span>Frictionless Sharing</span>
             </div>
-            <div className="text-xs font-medium text-slate-600 mt-3">Guest Links Enabled</div>
+            <div className="text-xs font-medium text-neutral-600 mt-3">Guest Links Enabled</div>
           </div>
         </div>
 
@@ -190,8 +190,8 @@ export default function DashboardPage() {
         {pinnedNotes.length > 0 && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
-                <Pin className="h-4 w-4 text-amber-500" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5">
+                <Pin className="h-4 w-4 text-neutral-700" />
                 <span>Pinned Notes</span>
               </h2>
             </div>
@@ -200,19 +200,19 @@ export default function DashboardPage() {
                 <Link
                   key={note.id}
                   href={`/notes/${note.id}`}
-                  className="group rounded-xl border border-amber-200 bg-amber-50/30 p-4 shadow-xs hover:border-amber-300 hover:shadow-md transition flex flex-col justify-between"
+                  className="group rounded-xl border border-neutral-300 bg-neutral-50/50 p-4 shadow-xs hover:border-black hover:shadow-sm transition flex flex-col justify-between"
                 >
                   <div className="space-y-1.5">
-                    <h3 className="font-semibold text-slate-900 group-hover:text-indigo-600 line-clamp-1">
+                    <h3 className="font-semibold text-neutral-900 group-hover:text-black line-clamp-1">
                       {note.title}
                     </h3>
-                    <p className="text-xs text-slate-500 line-clamp-3">
+                    <p className="text-xs text-neutral-600 line-clamp-3">
                       {note.plainText || 'No content yet...'}
                     </p>
                   </div>
-                  <div className="mt-4 flex items-center justify-between text-[11px] text-slate-400">
+                  <div className="mt-4 flex items-center justify-between text-[11px] text-neutral-400">
                     <span>{new Date(note.updatedAt).toLocaleDateString()}</span>
-                    <Pin className="h-3 w-3 text-amber-500" />
+                    <Pin className="h-3 w-3 text-neutral-700" />
                   </div>
                 </Link>
               ))}
@@ -225,38 +225,38 @@ export default function DashboardPage() {
           {/* Recent Notes (2 Cols) */}
           <div className="lg:col-span-2 space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
-                <Clock className="h-4 w-4 text-slate-400" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5">
+                <Clock className="h-4 w-4 text-neutral-500" />
                 <span>Recent Notes</span>
               </h2>
               <Link
                 href="/notes"
-                className="text-xs font-medium text-indigo-600 hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-neutral-900 hover:underline flex items-center gap-1"
               >
                 View all notes <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100 shadow-xs overflow-hidden">
+            <div className="bg-white rounded-xl border border-neutral-200 divide-y divide-neutral-100 shadow-xs overflow-hidden">
               {notes.map((note) => (
                 <Link
                   key={note.id}
                   href={`/notes/${note.id}`}
-                  className="flex items-center justify-between p-4 hover:bg-slate-50/80 transition group"
+                  className="flex items-center justify-between p-4 hover:bg-neutral-50 transition group"
                 >
                   <div className="space-y-1 min-w-0 pr-4">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-medium text-slate-900 group-hover:text-indigo-600 truncate text-sm">
+                      <h3 className="font-medium text-neutral-900 group-hover:text-black truncate text-sm">
                         {note.title}
                       </h3>
-                      {note.isPinned && <Pin className="h-3 w-3 text-amber-500 flex-shrink-0" />}
+                      {note.isPinned && <Pin className="h-3 w-3 text-neutral-700 flex-shrink-0" />}
                     </div>
-                    <p className="text-xs text-slate-500 truncate max-w-lg">
+                    <p className="text-xs text-neutral-600 truncate max-w-lg">
                       {note.plainText || 'Empty note'}
                     </p>
-                    <div className="flex items-center gap-2 text-[11px] text-slate-400 pt-0.5">
+                    <div className="flex items-center gap-2 text-[11px] text-neutral-400 pt-0.5">
                       {note.folder && (
-                        <span className="flex items-center gap-1 text-slate-600">
+                        <span className="flex items-center gap-1 text-neutral-600">
                           <FolderIcon className="h-2.5 w-2.5" />
                           <span>{note.folder.name}</span>
                         </span>
@@ -264,21 +264,21 @@ export default function DashboardPage() {
                       {(note.tags || []).map((t) => (
                         <span
                           key={t.id}
-                          className="bg-slate-100 px-1.5 py-0.2 rounded text-[10px] text-slate-600"
+                          className="bg-neutral-100 border border-neutral-200 px-1.5 py-0.2 rounded text-[10px] text-neutral-700 font-medium"
                         >
                           #{t.name}
                         </span>
                       ))}
                     </div>
                   </div>
-                  <div className="text-xs text-slate-400 flex-shrink-0">
+                  <div className="text-xs text-neutral-400 flex-shrink-0">
                     {new Date(note.updatedAt).toLocaleDateString()}
                   </div>
                 </Link>
               ))}
 
               {notes.length === 0 && (
-                <div className="p-8 text-center text-slate-400 text-xs">
+                <div className="p-8 text-center text-neutral-400 text-xs">
                   No notes yet. Type an idea above to create your first note!
                 </div>
               )}
@@ -288,36 +288,36 @@ export default function DashboardPage() {
           {/* Pending Action Tasks Widget (1 Col) */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
-                <CheckSquare className="h-4 w-4 text-emerald-600" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5">
+                <CheckSquare className="h-4 w-4 text-neutral-700" />
                 <span>Action Items</span>
               </h2>
               <Link
                 href="/tasks"
-                className="text-xs font-medium text-indigo-600 hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-neutral-900 hover:underline flex items-center gap-1"
               >
                 All tasks <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs space-y-3">
+            <div className="bg-white rounded-xl border border-neutral-200 p-4 shadow-xs space-y-3">
               {tasks.slice(0, 5).map((task) => (
                 <div
                   key={task.id}
-                  className="flex items-start gap-3 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 transition text-xs"
+                  className="flex items-start gap-3 p-2 rounded-lg border border-neutral-100 hover:bg-neutral-50 transition text-xs"
                 >
                   <input
                     type="checkbox"
                     checked={task.status === 'done'}
                     onChange={() => handleTaskToggle(task.id, task.status)}
-                    className="mt-0.5 h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                    className="mt-0.5 h-4 w-4 rounded border-neutral-300 text-black focus:ring-black accent-black cursor-pointer"
                   />
                   <div className="flex-1 space-y-0.5 min-w-0">
-                    <div className="font-medium text-slate-800 line-clamp-2">{task.title}</div>
+                    <div className="font-medium text-neutral-900 line-clamp-2">{task.title}</div>
                     {task.sourceNote && (
                       <Link
                         href={`/notes/${task.sourceNote.id}`}
-                        className="text-[11px] text-indigo-600 hover:underline block truncate"
+                        className="text-[11px] text-neutral-700 hover:underline hover:text-black block truncate"
                       >
                         Source: {task.sourceNote.title}
                       </Link>
@@ -327,7 +327,7 @@ export default function DashboardPage() {
               ))}
 
               {tasks.length === 0 && (
-                <p className="text-xs text-slate-400 italic py-4 text-center">
+                <p className="text-xs text-neutral-400 italic py-4 text-center">
                   No pending action items. Use AI task extraction inside any note to generate tasks!
                 </p>
               )}

@@ -65,7 +65,7 @@ export default function NoteDetailPage() {
           <p className="text-red-600 font-semibold">{error || 'Note not found.'}</p>
           <button
             onClick={() => router.push('/notes')}
-            className="rounded bg-indigo-600 px-4 py-2 text-xs font-semibold text-white"
+            className="rounded bg-black hover:bg-neutral-800 transition px-4 py-2 text-xs font-semibold text-white"
           >
             Back to Notes
           </button>

@@ -100,26 +100,26 @@ export default function SearchPage() {
 
         {/* Search Bar */}
         <div className="relative">
-          <SearchIcon className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+          <SearchIcon className="absolute left-4 top-3.5 h-5 w-5 text-neutral-400" />
           <input
             type="text"
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search notes by keyword, topic, or phrase..."
-            className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-12 pr-4 text-sm text-slate-800 placeholder-slate-400 shadow-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full rounded-xl border border-neutral-300 bg-white py-3 pl-12 pr-4 text-sm text-neutral-900 placeholder-neutral-400 shadow-xs focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
           />
           {searching && (
-            <span className="absolute right-4 top-3 text-xs text-slate-400 animate-pulse">
+            <span className="absolute right-4 top-3 text-xs text-neutral-400 animate-pulse">
               Searching...
             </span>
           )}
         </div>
 
         {/* Filters Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600 bg-white p-3 rounded-xl border border-slate-200">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-neutral-600 bg-white p-3 rounded-xl border border-neutral-200">
           <div className="flex items-center gap-3">
-            <span className="font-semibold flex items-center gap-1 text-slate-500">
+            <span className="font-semibold flex items-center gap-1 text-neutral-500">
               <Filter className="h-3.5 w-3.5" /> Filters:
             </span>
             <label className="flex items-center gap-1.5 cursor-pointer">
@@ -127,7 +127,7 @@ export default function SearchPage() {
                 type="checkbox"
                 checked={pinnedOnly}
                 onChange={(e) => setPinnedOnly(e.target.checked)}
-                className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                className="rounded border-neutral-300 text-black focus:ring-black accent-black cursor-pointer"
               />
               <span>Pinned only</span>
             </label>
@@ -136,18 +136,18 @@ export default function SearchPage() {
                 type="checkbox"
                 checked={archivedOnly}
                 onChange={(e) => setArchivedOnly(e.target.checked)}
-                className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                className="rounded border-neutral-300 text-black focus:ring-black accent-black cursor-pointer"
               />
               <span>Archived only</span>
             </label>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-slate-400">Sort by:</span>
+            <span className="text-neutral-400">Sort by:</span>
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as any)}
-              className="bg-transparent border-none text-xs font-medium text-slate-700 focus:outline-none cursor-pointer"
+              className="bg-transparent border-none text-xs font-medium text-neutral-700 focus:outline-none cursor-pointer"
             >
               <option value="rank">Relevance Rank</option>
               <option value="updated">Recently Updated</option>
@@ -159,7 +159,7 @@ export default function SearchPage() {
 
         {/* Results Header */}
         {totalCount !== null && (
-          <div className="text-xs text-slate-500">
+          <div className="text-xs text-neutral-500">
             Found {totalCount} {totalCount === 1 ? 'matching note' : 'matching notes'}
           </div>
         )}
@@ -170,17 +170,17 @@ export default function SearchPage() {
             <Link
               key={note.id}
               href={`/notes/${note.id}`}
-              className="block rounded-xl border border-slate-200 bg-white p-5 shadow-xs hover:border-indigo-300 hover:shadow-md transition group"
+              className="block rounded-xl border border-neutral-200 bg-white p-5 shadow-xs hover:border-black hover:shadow-sm transition group"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-slate-900 group-hover:text-indigo-600 text-base">
+                    <h3 className="font-semibold text-neutral-900 group-hover:text-black text-base">
                       {note.title}
                     </h3>
-                    {note.isPinned && <Pin className="h-3.5 w-3.5 text-amber-500" />}
+                    {note.isPinned && <Pin className="h-3.5 w-3.5 text-neutral-700" />}
                     {note.folderName && (
-                      <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[11px] font-medium">
+                      <span className="bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded text-[11px] font-medium border border-neutral-200">
                         {note.folderName}
                       </span>
                     )}
@@ -188,15 +188,15 @@ export default function SearchPage() {
 
                   {/* Highlighted Excerpt */}
                   <div
-                    className="text-xs text-slate-600 leading-relaxed [&>mark]:bg-amber-100 [&>mark]:text-amber-900 [&>mark]:font-semibold [&>mark]:px-1 [&>mark]:rounded"
+                    className="text-xs text-neutral-600 leading-relaxed [&>mark]:bg-neutral-200 [&>mark]:text-black [&>mark]:font-semibold [&>mark]:px-1 [&>mark]:rounded"
                     dangerouslySetInnerHTML={{ __html: note.excerpt || note.plainText }}
                   />
                 </div>
 
-                <div className="text-right text-[11px] text-slate-400 flex-shrink-0">
+                <div className="text-right text-[11px] text-neutral-400 flex-shrink-0">
                   <div>{new Date(note.updatedAt).toLocaleDateString()}</div>
                   {note.rank > 0 && (
-                    <div className="text-[10px] text-indigo-500 font-mono mt-1">
+                    <div className="text-[10px] text-neutral-500 font-mono mt-1">
                       score: {note.rank.toFixed(2)}
                     </div>
                   )}

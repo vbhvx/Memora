@@ -27,7 +27,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
+    <div className="min-h-screen flex flex-col bg-neutral-50/70">
       <Navbar onNewNote={handleNewNote} />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar onNewNote={handleNewNote} />
@@ -36,4 +36,3 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-

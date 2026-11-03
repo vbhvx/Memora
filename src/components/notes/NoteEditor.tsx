@@ -121,7 +121,7 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
     content: initialNote.content || '',
     editorProps: {
       attributes: {
-        class: 'prose prose-slate max-w-none focus:outline-none min-h-[400px] text-slate-800',
+        class: 'prose prose-neutral max-w-none focus:outline-none min-h-[400px] text-neutral-900',
       },
     },
     onUpdate: () => {
@@ -417,24 +417,24 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 sm:px-6 space-y-4">
       {/* Top Header & Save Status Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 pb-3">
         <div className="flex items-center gap-3">
           {/* Status Indicator Badge */}
           <div className="flex items-center gap-1.5 text-xs font-medium">
             {saveStatus === 'saving' && (
-              <span className="flex items-center gap-1 text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+              <span className="flex items-center gap-1 text-neutral-700 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-300">
                 <Clock className="h-3 w-3 animate-spin" />
                 <span>Saving...</span>
               </span>
             )}
             {saveStatus === 'saved' && (
-              <span className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                <CheckCircle className="h-3 w-3" />
+              <span className="flex items-center gap-1 text-neutral-900 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-300 font-medium">
+                <CheckCircle className="h-3 w-3 text-neutral-800" />
                 <span>Saved</span>
               </span>
             )}
             {saveStatus === 'failed' && (
-              <span className="flex items-center gap-1 text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
+              <span className="flex items-center gap-1 text-neutral-900 bg-neutral-200 px-2 py-0.5 rounded-full border border-neutral-400">
                 <AlertTriangle className="h-3 w-3" />
                 <span>Save failed</span>
                 <button onClick={() => saveChanges()} className="underline ml-1 font-bold">
@@ -443,12 +443,12 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
               </span>
             )}
             {saveStatus === 'conflict' && (
-              <span className="flex items-center gap-1 text-red-700 bg-red-100 px-2 py-0.5 rounded-full border border-red-300">
+              <span className="flex items-center gap-1 text-neutral-900 bg-neutral-200 px-2 py-0.5 rounded-full border border-neutral-400">
                 <AlertTriangle className="h-3.5 w-3.5" />
                 <span>Conflict detected</span>
                 <button
                   onClick={handleReloadNote}
-                  className="underline ml-1 font-bold text-red-800 hover:text-red-950"
+                  className="underline ml-1 font-bold text-black hover:text-neutral-800"
                 >
                   Reload Latest
                 </button>
@@ -456,7 +456,7 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
             )}
           </div>
 
-          <span className="text-xs text-slate-400">v{note.version}</span>
+          <span className="text-xs text-neutral-400">v{note.version}</span>
         </div>
 
         {/* Action Controls */}
@@ -465,8 +465,8 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
             onClick={handlePinToggle}
             className={`p-1.5 rounded-lg border text-xs transition ${
               note.isPinned
-                ? 'bg-amber-50 text-amber-600 border-amber-200'
-                : 'text-slate-500 border-slate-200 hover:bg-slate-100'
+                ? 'bg-black text-white border-black'
+                : 'text-neutral-600 border-neutral-300 hover:bg-neutral-100'
             }`}
             title={note.isPinned ? 'Unpin Note' : 'Pin Note'}
           >
@@ -477,8 +477,8 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
             onClick={handleArchiveToggle}
             className={`p-1.5 rounded-lg border text-xs transition ${
               note.archivedAt
-                ? 'bg-indigo-50 text-indigo-600 border-indigo-200'
-                : 'text-slate-500 border-slate-200 hover:bg-slate-100'
+                ? 'bg-black text-white border-black'
+                : 'text-neutral-600 border-neutral-300 hover:bg-neutral-100'
             }`}
             title={note.archivedAt ? 'Unarchive Note' : 'Archive Note'}
           >
@@ -487,16 +487,16 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
 
           <button
             onClick={() => setIsShareModalOpen(true)}
-            className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 shadow-sm"
+            className="flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-800 hover:bg-neutral-100 shadow-xs transition"
           >
-            <Share2 className="h-3.5 w-3.5 text-slate-500" />
+            <Share2 className="h-3.5 w-3.5 text-neutral-500" />
             <span>Share</span>
           </button>
 
           {onDelete && (
             <button
               onClick={onDelete}
-              className="p-1.5 rounded-lg border border-slate-200 text-slate-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 text-xs"
+              className="p-1.5 rounded-lg border border-neutral-200 text-neutral-400 hover:text-black hover:border-neutral-400 hover:bg-neutral-100 text-xs transition"
               title="Delete Note"
             >
               <Trash2 className="h-4 w-4" />
@@ -512,18 +512,18 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
           value={title}
           onChange={handleTitleChange}
           placeholder="Untitled Note"
-          className="w-full text-2xl sm:text-3xl font-extrabold text-slate-900 placeholder:text-slate-300 border-none bg-transparent focus:outline-none"
+          className="w-full text-2xl sm:text-3xl font-extrabold text-neutral-900 placeholder:text-neutral-300 border-none bg-transparent focus:outline-none"
         />
       </div>
 
       {/* Meta Selector Bar: Folder & Tags */}
-      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+      <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-600 bg-neutral-100/70 p-2.5 rounded-lg border border-neutral-200">
         <div className="flex items-center gap-1.5">
-          <FolderIcon className="h-3.5 w-3.5 text-slate-400" />
+          <FolderIcon className="h-3.5 w-3.5 text-neutral-500" />
           <select
             value={note.folderId || ''}
             onChange={(e) => handleFolderChange(e.target.value || null)}
-            className="bg-transparent border-none text-xs text-slate-700 focus:outline-none cursor-pointer"
+            className="bg-transparent border-none text-xs font-medium text-neutral-800 focus:outline-none cursor-pointer"
           >
             <option value="">(Inbox / No Folder)</option>
             {folders.map((f) => (
@@ -534,20 +534,20 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
           </select>
         </div>
 
-        <div className="h-3 w-px bg-slate-200" />
+        <div className="h-3 w-px bg-neutral-300" />
 
         {/* Tags */}
         <div className="flex flex-wrap items-center gap-1.5">
-          <TagIcon className="h-3.5 w-3.5 text-slate-400" />
+          <TagIcon className="h-3.5 w-3.5 text-neutral-500" />
           {(note.tags || []).map((t) => (
             <span
               key={t.id}
-              className="inline-flex items-center gap-1 bg-white border border-slate-200 px-1.5 py-0.5 rounded text-xs text-slate-700"
+              className="inline-flex items-center gap-1 bg-white border border-neutral-300 px-1.5 py-0.5 rounded text-xs text-neutral-800"
             >
               <span>{t.name}</span>
               <button
                 onClick={() => handleRemoveTag(t.id)}
-                className="hover:text-red-500 text-slate-400"
+                className="hover:text-black text-neutral-400"
               >
                 &times;
               </button>
@@ -561,41 +561,41 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
               placeholder="+ tag"
               value={newTagInput}
               onChange={(e) => setNewTagInput(e.target.value)}
-              className="w-16 rounded border border-slate-200 bg-white px-1.5 py-0.5 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="w-16 rounded border border-neutral-300 bg-white px-1.5 py-0.5 text-xs text-neutral-800 focus:outline-none focus:ring-1 focus:ring-black"
             />
           </form>
         </div>
       </div>
 
       {/* AI Controls Toolbar */}
-      <div className="flex flex-wrap items-center gap-2 bg-indigo-50/60 p-2 rounded-lg border border-indigo-100 text-xs text-indigo-900">
-        <span className="font-semibold flex items-center gap-1 text-indigo-700">
-          <Sparkles className="h-3.5 w-3.5 text-indigo-600" />
+      <div className="flex flex-wrap items-center gap-2 bg-neutral-100 p-2 rounded-lg border border-neutral-200 text-xs text-neutral-900">
+        <span className="font-semibold flex items-center gap-1.5 text-neutral-900">
+          <Sparkles className="h-3.5 w-3.5 text-neutral-800" />
           AI Actions:
         </span>
         <button
           onClick={handleAiSuggestTitle}
           disabled={isAiLoading}
-          className="rounded bg-white border border-indigo-200 px-2.5 py-1 text-indigo-700 hover:bg-indigo-50 transition shadow-xs disabled:opacity-50"
+          className="rounded bg-white border border-neutral-300 px-2.5 py-1 text-neutral-800 font-medium hover:bg-neutral-50 hover:border-neutral-400 transition shadow-xs disabled:opacity-50"
         >
           Suggest Title
         </button>
         <button
           onClick={handleAiSummarize}
           disabled={isAiLoading}
-          className="rounded bg-white border border-indigo-200 px-2.5 py-1 text-indigo-700 hover:bg-indigo-50 transition shadow-xs disabled:opacity-50"
+          className="rounded bg-white border border-neutral-300 px-2.5 py-1 text-neutral-800 font-medium hover:bg-neutral-50 hover:border-neutral-400 transition shadow-xs disabled:opacity-50"
         >
           Summarize
         </button>
         <button
           onClick={handleAiExtractActions}
           disabled={isAiLoading}
-          className="rounded bg-white border border-indigo-200 px-2.5 py-1 text-indigo-700 hover:bg-indigo-50 transition shadow-xs disabled:opacity-50"
+          className="rounded bg-white border border-neutral-300 px-2.5 py-1 text-neutral-800 font-medium hover:bg-neutral-50 hover:border-neutral-400 transition shadow-xs disabled:opacity-50"
         >
           Extract Tasks
         </button>
         {isAiLoading && (
-          <span className="text-xs text-indigo-600 flex items-center gap-1 animate-pulse ml-auto">
+          <span className="text-xs text-neutral-600 flex items-center gap-1 animate-pulse ml-auto font-medium">
             Processing with AI...
           </span>
         )}
@@ -603,32 +603,32 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
 
       {/* AI Review Card: Title Suggestion */}
       {titleSuggestion && (
-        <div className="bg-amber-50/80 border border-amber-200 rounded-lg p-3 text-sm space-y-2">
+        <div className="bg-neutral-50 border border-neutral-300 rounded-lg p-3 text-sm space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 font-semibold text-amber-900">
-              <Sparkles className="h-4 w-4 text-amber-600" />
+            <div className="flex items-center gap-1.5 font-semibold text-neutral-900">
+              <Sparkles className="h-4 w-4 text-neutral-700" />
               <span>Proposed Title Suggestion</span>
             </div>
             {titleSuggestion.sourceVersion !== note.version && (
-              <span className="text-xs text-amber-700 italic">
+              <span className="text-xs text-neutral-500 italic">
                 (Generated from v{titleSuggestion.sourceVersion}; note is now v{note.version})
               </span>
             )}
           </div>
-          <p className="text-slate-800 font-medium bg-white p-2 rounded border border-amber-200">
+          <p className="text-neutral-900 font-medium bg-white p-2 rounded border border-neutral-200">
             &ldquo;{titleSuggestion.title}&rdquo;
           </p>
           <div className="flex items-center gap-2">
             <button
               onClick={applyTitleSuggestion}
-              className="flex items-center gap-1 bg-amber-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-amber-700"
+              className="flex items-center gap-1 bg-black text-white px-3 py-1 rounded text-xs font-medium hover:bg-neutral-800 transition"
             >
               <Check className="h-3 w-3" />
               <span>Apply Title</span>
             </button>
             <button
               onClick={() => setTitleSuggestion(null)}
-              className="flex items-center gap-1 text-slate-600 bg-white border border-slate-200 px-3 py-1 rounded text-xs hover:bg-slate-50"
+              className="flex items-center gap-1 text-neutral-700 bg-white border border-neutral-300 px-3 py-1 rounded text-xs hover:bg-neutral-100 transition"
             >
               <X className="h-3 w-3" />
               <span>Dismiss</span>
@@ -639,10 +639,10 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
 
       {/* AI Review Card: Summary */}
       {summarySuggestion && (
-        <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm space-y-3">
+        <div className="bg-neutral-50 border border-neutral-300 rounded-lg p-4 text-sm space-y-3">
           <div className="flex items-center justify-between">
-            <span className="font-semibold text-slate-800 flex items-center gap-1.5">
-              <FileText className="h-4 w-4 text-indigo-600" />
+            <span className="font-semibold text-neutral-900 flex items-center gap-1.5">
+              <FileText className="h-4 w-4 text-neutral-700" />
               AI Summary
             </span>
             <button
@@ -650,19 +650,19 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
                 navigator.clipboard.writeText(summarySuggestion.summary);
                 alert('Summary copied to clipboard!');
               }}
-              className="text-xs text-indigo-600 flex items-center gap-1 hover:underline"
+              className="text-xs text-neutral-900 flex items-center gap-1 hover:underline font-medium"
             >
               <Copy className="h-3 w-3" />
               <span>Copy</span>
             </button>
           </div>
-          <p className="text-slate-700 leading-relaxed">{summarySuggestion.summary}</p>
+          <p className="text-neutral-800 leading-relaxed">{summarySuggestion.summary}</p>
           {summarySuggestion.keyPoints.length > 0 && (
             <div className="space-y-1">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
                 Key Points
               </span>
-              <ul className="list-disc pl-5 text-xs text-slate-600 space-y-0.5">
+              <ul className="list-disc pl-5 text-xs text-neutral-700 space-y-0.5">
                 {summarySuggestion.keyPoints.map((kp, i) => (
                   <li key={i}>{kp}</li>
                 ))}
@@ -671,7 +671,7 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
           )}
           <button
             onClick={() => setSummarySuggestion(null)}
-            className="text-xs text-slate-500 hover:text-slate-800"
+            className="text-xs text-neutral-500 hover:text-neutral-900 transition"
           >
             Dismiss
           </button>
@@ -680,14 +680,14 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
 
       {/* AI Review Card: Action Extraction */}
       {actionSuggestions && (
-        <div className="bg-emerald-50/70 border border-emerald-200 rounded-lg p-4 space-y-3">
+        <div className="bg-neutral-50 border border-neutral-300 rounded-lg p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="font-semibold text-emerald-900 flex items-center gap-1.5 text-sm">
-              <CheckCircle className="h-4 w-4 text-emerald-600" />
+            <span className="font-semibold text-neutral-900 flex items-center gap-1.5 text-sm">
+              <CheckCircle className="h-4 w-4 text-neutral-700" />
               Review Extracted Action Items ({actionSuggestions.length})
             </span>
             {actionSourceVersion && actionSourceVersion !== note.version && (
-              <span className="text-xs text-emerald-800 italic">
+              <span className="text-xs text-neutral-500 italic">
                 (Extracted from v{actionSourceVersion}; note is now v{note.version})
               </span>
             )}
@@ -697,7 +697,7 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
             {actionSuggestions.map((item, idx) => (
               <div
                 key={idx}
-                className="flex items-start gap-3 bg-white p-2.5 rounded border border-emerald-100 text-xs"
+                className="flex items-start gap-3 bg-white p-2.5 rounded border border-neutral-200 text-xs"
               >
                 <input
                   type="checkbox"
@@ -707,22 +707,22 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
                     next[idx].selected = e.target.checked;
                     setActionSuggestions(next);
                   }}
-                  className="mt-0.5 h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                  className="mt-0.5 h-4 w-4 rounded border-neutral-300 text-black focus:ring-black accent-black cursor-pointer"
                 />
                 <div className="flex-1 space-y-1">
-                  <div className="font-semibold text-slate-800">{item.title}</div>
-                  <div className="flex flex-wrap items-center gap-2 text-slate-500">
+                  <div className="font-semibold text-neutral-900">{item.title}</div>
+                  <div className="flex flex-wrap items-center gap-2 text-neutral-500">
                     {item.assigneeName && (
-                      <span className="bg-slate-100 px-1.5 py-0.5 rounded text-[11px] font-medium text-slate-700">
+                      <span className="bg-neutral-100 border border-neutral-200 px-1.5 py-0.5 rounded text-[11px] font-medium text-neutral-800">
                         Assignee: {item.assigneeName}
                       </span>
                     )}
                     {item.dueDateText && (
-                      <span className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded text-[11px] font-medium">
+                      <span className="bg-neutral-100 border border-neutral-200 text-neutral-800 px-1.5 py-0.5 rounded text-[11px] font-medium">
                         Due: {item.dueDateText}
                       </span>
                     )}
-                    <span className="italic text-slate-400">
+                    <span className="italic text-neutral-500">
                       Excerpt: &ldquo;{item.sourceExcerpt}&rdquo;
                     </span>
                   </div>
@@ -734,13 +734,13 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
           <div className="flex items-center gap-2 pt-1">
             <button
               onClick={handleCreateApprovedTasks}
-              className="bg-emerald-600 text-white px-3.5 py-1.5 rounded text-xs font-semibold hover:bg-emerald-700 shadow-sm transition"
+              className="bg-black text-white px-3.5 py-1.5 rounded text-xs font-semibold hover:bg-neutral-800 shadow-sm transition"
             >
               Create Approved Tasks ({actionSuggestions.filter((i) => i.selected).length})
             </button>
             <button
               onClick={() => setActionSuggestions(null)}
-              className="text-xs text-slate-500 hover:text-slate-800 px-2 py-1"
+              className="text-xs text-neutral-600 hover:text-black px-2 py-1 transition"
             >
               Cancel
             </button>
@@ -749,84 +749,84 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
       )}
 
       {tasksCreatedNotice && (
-        <div className="bg-emerald-100 text-emerald-800 text-xs px-3 py-2 rounded flex items-center justify-between">
+        <div className="bg-neutral-100 border border-neutral-300 text-neutral-900 text-xs px-3 py-2 rounded flex items-center justify-between">
           <span>{tasksCreatedNotice}</span>
-          <button onClick={() => setTasksCreatedNotice(null)} className="font-bold">
+          <button onClick={() => setTasksCreatedNotice(null)} className="font-bold text-neutral-700 hover:text-black">
             &times;
           </button>
         </div>
       )}
 
       {/* Editor Formatting Toolbar */}
-      <div className="flex flex-wrap items-center gap-1 border border-slate-200 bg-white p-1 rounded-lg shadow-xs sticky top-16 z-20">
+      <div className="flex flex-wrap items-center gap-1 border border-neutral-200 bg-white p-1 rounded-lg shadow-xs sticky top-16 z-20">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`p-1.5 rounded hover:bg-slate-100 ${editor.isActive('bold') ? 'bg-slate-200 text-slate-900' : 'text-slate-600'}`}
+          className={`p-1.5 rounded hover:bg-neutral-100 transition ${editor.isActive('bold') ? 'bg-neutral-200 text-neutral-900 font-bold' : 'text-neutral-600'}`}
           title="Bold"
         >
           <Bold className="h-4 w-4" />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`p-1.5 rounded hover:bg-slate-100 ${editor.isActive('italic') ? 'bg-slate-200 text-slate-900' : 'text-slate-600'}`}
+          className={`p-1.5 rounded hover:bg-neutral-100 transition ${editor.isActive('italic') ? 'bg-neutral-200 text-neutral-900 font-bold' : 'text-neutral-600'}`}
           title="Italic"
         >
           <Italic className="h-4 w-4" />
         </button>
-        <div className="h-4 w-px bg-slate-200" />
+        <div className="h-4 w-px bg-neutral-200" />
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={`p-1.5 rounded hover:bg-slate-100 ${editor.isActive('heading', { level: 1 }) ? 'bg-slate-200 text-slate-900' : 'text-slate-600'}`}
+          className={`p-1.5 rounded hover:bg-neutral-100 transition ${editor.isActive('heading', { level: 1 }) ? 'bg-neutral-200 text-neutral-900 font-bold' : 'text-neutral-600'}`}
           title="Heading 1"
         >
           <Heading1 className="h-4 w-4" />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={`p-1.5 rounded hover:bg-slate-100 ${editor.isActive('heading', { level: 2 }) ? 'bg-slate-200 text-slate-900' : 'text-slate-600'}`}
+          className={`p-1.5 rounded hover:bg-neutral-100 transition ${editor.isActive('heading', { level: 2 }) ? 'bg-neutral-200 text-neutral-900 font-bold' : 'text-neutral-600'}`}
           title="Heading 2"
         >
           <Heading2 className="h-4 w-4" />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          className={`p-1.5 rounded hover:bg-slate-100 ${editor.isActive('heading', { level: 3 }) ? 'bg-slate-200 text-slate-900' : 'text-slate-600'}`}
+          className={`p-1.5 rounded hover:bg-neutral-100 transition ${editor.isActive('heading', { level: 3 }) ? 'bg-neutral-200 text-neutral-900 font-bold' : 'text-neutral-600'}`}
           title="Heading 3"
         >
           <Heading3 className="h-4 w-4" />
         </button>
-        <div className="h-4 w-px bg-slate-200" />
+        <div className="h-4 w-px bg-neutral-200" />
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`p-1.5 rounded hover:bg-slate-100 ${editor.isActive('bulletList') ? 'bg-slate-200 text-slate-900' : 'text-slate-600'}`}
+          className={`p-1.5 rounded hover:bg-neutral-100 transition ${editor.isActive('bulletList') ? 'bg-neutral-200 text-neutral-900 font-bold' : 'text-neutral-600'}`}
           title="Bullet List"
         >
           <List className="h-4 w-4" />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`p-1.5 rounded hover:bg-slate-100 ${editor.isActive('orderedList') ? 'bg-slate-200 text-slate-900' : 'text-slate-600'}`}
+          className={`p-1.5 rounded hover:bg-neutral-100 transition ${editor.isActive('orderedList') ? 'bg-neutral-200 text-neutral-900 font-bold' : 'text-neutral-600'}`}
           title="Numbered List"
         >
           <ListOrdered className="h-4 w-4" />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={`p-1.5 rounded hover:bg-slate-100 ${editor.isActive('blockquote') ? 'bg-slate-200 text-slate-900' : 'text-slate-600'}`}
+          className={`p-1.5 rounded hover:bg-neutral-100 transition ${editor.isActive('blockquote') ? 'bg-neutral-200 text-neutral-900 font-bold' : 'text-neutral-600'}`}
           title="Quote"
         >
           <Quote className="h-4 w-4" />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={`p-1.5 rounded hover:bg-slate-100 ${editor.isActive('codeBlock') ? 'bg-slate-200 text-slate-900' : 'text-slate-600'}`}
+          className={`p-1.5 rounded hover:bg-neutral-100 transition ${editor.isActive('codeBlock') ? 'bg-neutral-200 text-neutral-900 font-bold' : 'text-neutral-600'}`}
           title="Code Block"
         >
           <Code className="h-4 w-4" />
         </button>
         <button
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          className="p-1.5 rounded hover:bg-slate-100 text-slate-600"
+          className="p-1.5 rounded hover:bg-neutral-100 text-neutral-600 transition"
           title="Horizontal Rule"
         >
           <Minus className="h-4 w-4" />
@@ -834,7 +834,7 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
       </div>
 
       {/* Editor Main Content Area */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 min-h-[450px] shadow-xs">
+      <div className="bg-white rounded-xl border border-neutral-200 p-6 min-h-[450px] shadow-xs">
         <EditorContent editor={editor} />
       </div>
 

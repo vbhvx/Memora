@@ -37,33 +37,33 @@ export default function SettingsPage() {
         </div>
 
         {/* Profile Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
-            <UserIcon className="h-4 w-4 text-indigo-600" />
+        <div className="bg-white rounded-2xl border border-neutral-200 p-6 shadow-xs space-y-4">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-2">
+            <UserIcon className="h-4 w-4 text-neutral-900" />
             <span>Profile Details</span>
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div>
-              <span className="text-slate-400 block mb-0.5">Full Name</span>
-              <span className="font-semibold text-slate-800 text-sm">{user.name}</span>
+              <span className="text-neutral-400 block mb-0.5">Full Name</span>
+              <span className="font-semibold text-neutral-900 text-sm">{user.name}</span>
             </div>
             <div>
-              <span className="text-slate-400 block mb-0.5">Email Address</span>
-              <span className="font-semibold text-slate-800 text-sm">{user.email}</span>
+              <span className="text-neutral-400 block mb-0.5">Email Address</span>
+              <span className="font-semibold text-neutral-900 text-sm">{user.email}</span>
             </div>
           </div>
         </div>
 
         {/* Privacy & AI Processing Notice */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-indigo-600" />
+        <div className="bg-white rounded-2xl border border-neutral-200 p-6 shadow-xs space-y-4">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-neutral-900" />
             <span>AI Architecture & Privacy Boundaries</span>
           </h2>
 
-          <div className="space-y-3 text-xs text-slate-600 leading-relaxed">
-            <div className="flex items-start gap-2 bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-indigo-950">
-              <Info className="h-4 w-4 text-indigo-600 flex-shrink-0 mt-0.5" />
+          <div className="space-y-3 text-xs text-neutral-600 leading-relaxed">
+            <div className="flex items-start gap-2 bg-neutral-100 p-3 rounded-lg border border-neutral-300 text-neutral-900">
+              <Info className="h-4 w-4 text-neutral-800 flex-shrink-0 mt-0.5" />
               <div>
                 <strong>Explicit Triggering:</strong> AI features (title suggestion, summarization,
                 and task extraction) are executed strictly on user demand. Memora never sends data to
@@ -71,7 +71,7 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            <div className="space-y-2 pt-1">
+            <div className="space-y-2 pt-1 text-neutral-700">
               <p>
                 <strong>Server-Side Processing:</strong> Secret API keys are strictly maintained on
                 the backend and never exposed to the client browser.
@@ -89,12 +89,12 @@ export default function SettingsPage() {
         </div>
 
         {/* Sharing Security Model */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
-            <Shield className="h-4 w-4 text-emerald-600" />
+        <div className="bg-white rounded-2xl border border-neutral-200 p-6 shadow-xs space-y-4">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-2">
+            <Shield className="h-4 w-4 text-neutral-900" />
             <span>Sharing & Access Control Model</span>
           </h2>
-          <div className="text-xs text-slate-600 space-y-2 leading-relaxed">
+          <div className="text-xs text-neutral-700 space-y-2 leading-relaxed">
             <p>
               <strong>Cryptographic Share Tokens:</strong> Share links utilize 256-bit cryptographically
               random tokens. The database stores only SHA-256 hashes of usable tokens, preventing
@@ -113,14 +113,14 @@ export default function SettingsPage() {
         </div>
 
         {/* Session & Logout */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex items-center justify-between">
+        <div className="bg-white rounded-2xl border border-neutral-200 p-6 shadow-xs flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-slate-900 text-sm">Account Session</h3>
-            <p className="text-xs text-slate-500">Sign out of your active session on this device.</p>
+            <h3 className="font-semibold text-neutral-900 text-sm">Account Session</h3>
+            <p className="text-xs text-neutral-500">Sign out of your active session on this device.</p>
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-xs font-semibold text-red-700 hover:bg-red-100 transition"
+            className="flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-xs font-semibold text-neutral-800 hover:bg-neutral-100 hover:border-neutral-400 transition"
           >
             <LogOut className="h-3.5 w-3.5" />
             <span>Sign Out</span>
