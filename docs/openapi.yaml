@@ -1,0 +1,461 @@
+openapi: 3.0.3
+info:
+  title: Memora API
+  version: 1.0.0
+  description: >
+    AI-Powered Notes, Knowledge Organization & Action Management Platform API.
+    Provides authenticated endpoints for note capture, folder/tag organization,
+    PostgreSQL full-text search, AI title/summary/task extraction, task management,
+    and secure frictionless guest sharing.
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Local Development Server
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, name]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string, minLength: 8 }
+                name: { type: string }
+      responses:
+        '200':
+          description: User registered and session token issued.
+        '400':
+          description: Validation error or email already in use.
+
+  /auth/login:
+    post:
+      summary: Authenticate with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+      responses:
+        '200':
+          description: Authentication successful.
+        '401':
+          description: Invalid credentials.
+
+  /auth/logout:
+    post:
+      summary: Terminate session and clear cookie
+      responses:
+        '200':
+          description: Logged out successfully.
+
+  /auth/me:
+    get:
+      summary: Get currently authenticated user profile
+      responses:
+        '200':
+          description: Current user profile.
+        '401':
+          description: Unauthenticated.
+
+  /notes:
+    get:
+      summary: List notes belonging to the authenticated user
+      parameters:
+        - in: query
+          name: folderId
+          schema: { type: string }
+        - in: query
+          name: tagId
+          schema: { type: string }
+        - in: query
+          name: pinned
+          schema: { type: boolean }
+        - in: query
+          name: archived
+          schema: { type: boolean }
+        - in: query
+          name: sort
+          schema: { type: string, enum: [updated, created, title] }
+      responses:
+        '200':
+          description: List of notes.
+    post:
+      summary: Create a new note
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string }
+                content: { type: string }
+                plainText: { type: string }
+                folderId: { type: string, nullable: true }
+                isPinned: { type: boolean }
+                tagIds: { type: array, items: { type: string } }
+      responses:
+        '201':
+          description: Note created.
+
+  /notes/{noteId}:
+    get:
+      summary: Retrieve a single note
+      parameters:
+        - in: path
+          name: noteId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Note details.
+        '404':
+          description: Note not found.
+    patch:
+      summary: Update a note with optimistic concurrency control
+      parameters:
+        - in: path
+          name: noteId
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string }
+                content: { type: string }
+                plainText: { type: string }
+                folderId: { type: string, nullable: true }
+                isPinned: { type: boolean }
+                isArchived: { type: boolean }
+                version: { type: integer, description: Current client version for OCC }
+      responses:
+        '200':
+          description: Note updated.
+        '409':
+          description: Conflict detected. Stale update rejected.
+    delete:
+      summary: Soft-delete a note
+      parameters:
+        - in: path
+          name: noteId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Note deleted.
+
+  /notes/{noteId}/revisions:
+    get:
+      summary: Retrieve revision history for a note
+      parameters:
+        - in: path
+          name: noteId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Revision history list.
+
+  /notes/{noteId}/tags:
+    put:
+      summary: Replace assigned tags on a note
+      parameters:
+        - in: path
+          name: noteId
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tagIds]
+              properties:
+                tagIds: { type: array, items: { type: string } }
+      responses:
+        '200':
+          description: Updated tag assignments.
+
+  /folders:
+    get:
+      summary: List user folders
+      responses:
+        '200':
+          description: List of folders.
+    post:
+      summary: Create a folder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+                parentId: { type: string, nullable: true }
+      responses:
+        '201':
+          description: Folder created.
+
+  /tags:
+    get:
+      summary: List user tags
+      responses:
+        '200':
+          description: List of tags.
+    post:
+      summary: Create a tag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+      responses:
+        '201':
+          description: Tag created.
+
+  /search:
+    get:
+      summary: Full-text search across authorized notes
+      parameters:
+        - in: query
+          name: q
+          schema: { type: string }
+        - in: query
+          name: folderId
+          schema: { type: string }
+        - in: query
+          name: tag
+          schema: { type: string }
+        - in: query
+          name: sort
+          schema: { type: string, enum: [rank, updated, created, title] }
+      responses:
+        '200':
+          description: Relevance-ranked search results with excerpts.
+
+  /notes/{noteId}/ai/title:
+    post:
+      summary: Request AI-generated title suggestion
+      parameters:
+        - in: path
+          name: noteId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Reviewable title suggestion tied to source version.
+
+  /notes/{noteId}/ai/summary:
+    post:
+      summary: Request AI-generated summary and key points
+      parameters:
+        - in: path
+          name: noteId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Reviewable summary tied to source version.
+
+  /notes/{noteId}/ai/actions:
+    post:
+      summary: Extract actionable tasks, assignees, and deadlines from note
+      parameters:
+        - in: path
+          name: noteId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Validated structured action items list.
+
+  /tasks:
+    get:
+      summary: List user tasks
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string, enum: [todo, in_progress, done] }
+        - in: query
+          name: priority
+          schema: { type: string, enum: [low, medium, high] }
+      responses:
+        '200':
+          description: Tasks list.
+    post:
+      summary: Manually create a task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title: { type: string }
+                priority: { type: string, enum: [low, medium, high] }
+                assigneeName: { type: string }
+                dueAt: { type: string, format: date-time }
+      responses:
+        '201':
+          description: Task created.
+
+  /tasks/from-suggestions:
+    post:
+      summary: Convert approved action item suggestions into active tasks with deduplication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sourceNoteId, items]
+              properties:
+                sourceNoteId: { type: string }
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required: [title]
+                    properties:
+                      title: { type: string }
+                      description: { type: string }
+                      assigneeName: { type: string }
+                      dueDateText: { type: string }
+      responses:
+        '201':
+          description: Approved tasks created.
+
+  /notes/{noteId}/shares:
+    get:
+      summary: List active share configurations for a note
+      parameters:
+        - in: path
+          name: noteId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Active shares.
+    post:
+      summary: Generate a secure random guest share link
+      parameters:
+        - in: path
+          name: noteId
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [permission]
+              properties:
+                permission: { type: string, enum: [view, comment, edit] }
+                expiresAt: { type: string, format: date-time, nullable: true }
+      responses:
+        '201':
+          description: Usable share URL returned once.
+
+  /notes/{noteId}/shares/{shareId}:
+    delete:
+      summary: Immediately revoke a share link
+      parameters:
+        - in: path
+          name: noteId
+          required: true
+          schema: { type: string }
+        - in: path
+          name: shareId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Share link revoked.
+
+  /shared/{token}:
+    get:
+      summary: Unauthenticated guest access to a shared note
+      parameters:
+        - in: path
+          name: token
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Shared note content and comments.
+        '403':
+          description: Share revoked.
+        '410':
+          description: Share expired.
+
+  /shared/{token}/comments:
+    post:
+      summary: Post a guest comment on a permitted shared note
+      parameters:
+        - in: path
+          name: token
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                guestDisplayName: { type: string }
+                content: { type: string }
+      responses:
+        '201':
+          description: Comment created.
+
+  /shared/{token}/edit:
+    patch:
+      summary: Edit a shared note under permitted edit share
+      parameters:
+        - in: path
+          name: token
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [version]
+              properties:
+                title: { type: string }
+                content: { type: string }
+                plainText: { type: string }
+                version: { type: integer }
+      responses:
+        '200':
+          description: Note updated.
+        '409':
+          description: Edit conflict detected.
+
