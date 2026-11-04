@@ -33,8 +33,10 @@ import {
   X,
   Copy,
   ExternalLink,
+  History,
 } from 'lucide-react';
 import { SharingModal } from './SharingModal';
+import { RevisionHistoryModal } from './RevisionHistoryModal';
 
 export type SaveStatus = 'saved' | 'saving' | 'failed' | 'conflict' | 'offline';
 
@@ -70,6 +72,7 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
 
   // Modals & Panels
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
 
   // AI Review States
@@ -486,6 +489,15 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
           </button>
 
           <button
+            onClick={() => setIsHistoryOpen(true)}
+            className="flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-800 hover:bg-neutral-100 shadow-xs transition"
+            title="View revision history & rollback"
+          >
+            <History className="h-3.5 w-3.5 text-neutral-500" />
+            <span>History</span>
+          </button>
+
+          <button
             onClick={() => setIsShareModalOpen(true)}
             className="flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-800 hover:bg-neutral-100 shadow-xs transition"
           >
@@ -844,6 +856,16 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
           noteId={note.id}
           noteTitle={title}
           onClose={() => setIsShareModalOpen(false)}
+        />
+      )}
+
+      {/* Revision History Modal */}
+      {isHistoryOpen && (
+        <RevisionHistoryModal
+          noteId={note.id}
+          currentVersion={note.version}
+          onClose={() => setIsHistoryOpen(false)}
+          onRestored={handleReloadNote}
         />
       )}
     </div>

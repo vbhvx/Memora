@@ -293,5 +293,46 @@ export class NoteService {
       limit: 30,
     });
   }
+
+  static async rollbackRevision(userId: string, noteId: string, revisionId: string) {
+    const note = await db.query.notes.findFirst({
+      where: and(eq(notes.id, noteId), eq(notes.ownerId, userId), isNull(notes.deletedAt)),
+    });
+    if (!note) {
+      throw ApiError.notFound('Note not found.');
+    }
+
+    const revision = await db.query.noteRevisions.findFirst({
+      where: and(eq(noteRevisions.id, revisionId), eq(noteRevisions.noteId, noteId)),
+    });
+    if (!revision) {
+      throw ApiError.notFound('Revision snapshot not found.');
+    }
+
+    const nextVersion = note.version + 1;
+    const [updated] = await db
+      .update(notes)
+      .set({
+        title: revision.titleSnapshot,
+        content: revision.contentSnapshot,
+        plainText: revision.plainTextSnapshot,
+        version: nextVersion,
+        updatedAt: new Date(),
+      })
+      .where(and(eq(notes.id, noteId), eq(notes.ownerId, userId)))
+      .returning();
+
+    await db.insert(noteRevisions).values({
+      id: `rev_${crypto.randomUUID()}`,
+      noteId,
+      version: nextVersion,
+      titleSnapshot: revision.titleSnapshot,
+      contentSnapshot: revision.contentSnapshot,
+      plainTextSnapshot: revision.plainTextSnapshot,
+      createdBy: userId,
+    });
+
+    return this.getNoteById(userId, updated.id);
+  }
 }
 
