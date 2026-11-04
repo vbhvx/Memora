@@ -34,9 +34,11 @@ import {
   Copy,
   ExternalLink,
   History,
+  Download,
 } from 'lucide-react';
 import { SharingModal } from './SharingModal';
 import { RevisionHistoryModal } from './RevisionHistoryModal';
+import { NoteExportModal } from './NoteExportModal';
 
 export type SaveStatus = 'saved' | 'saving' | 'failed' | 'conflict' | 'offline';
 
@@ -73,6 +75,7 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
   // Modals & Panels
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isExportOpen, setIsExportOpen] = useState(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
 
   // AI Review States
@@ -498,6 +501,15 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
           </button>
 
           <button
+            onClick={() => setIsExportOpen(true)}
+            className="flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-800 hover:bg-neutral-100 shadow-xs transition"
+            title="Export note in multiple formats"
+          >
+            <Download className="h-3.5 w-3.5 text-neutral-500" />
+            <span>Export</span>
+          </button>
+
+          <button
             onClick={() => setIsShareModalOpen(true)}
             className="flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-800 hover:bg-neutral-100 shadow-xs transition"
           >
@@ -846,8 +858,24 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
       </div>
 
       {/* Editor Main Content Area */}
-      <div className="bg-white rounded-xl border border-neutral-200 p-6 min-h-[450px] shadow-xs">
+      <div className="bg-white rounded-xl border border-neutral-200 p-6 min-h-[450px] shadow-xs flex flex-col justify-between">
         <EditorContent editor={editor} />
+
+        {/* Live Document Statistics */}
+        <div className="pt-4 mt-6 border-t border-neutral-100 flex items-center justify-between text-[11px] text-neutral-400 select-none">
+          <div className="flex items-center gap-4">
+            <span>
+              {(editor.getText() || '').trim().split(/\s+/).filter(Boolean).length} words
+            </span>
+            <span>
+              {(editor.getText() || '').length} characters
+            </span>
+            <span>
+              ~{Math.max(1, Math.ceil((editor.getText() || '').trim().split(/\s+/).filter(Boolean).length / 200))} min read
+            </span>
+          </div>
+          <span>UTF-8</span>
+        </div>
       </div>
 
       {/* Sharing Settings Modal */}
@@ -866,6 +894,18 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
           currentVersion={note.version}
           onClose={() => setIsHistoryOpen(false)}
           onRestored={handleReloadNote}
+        />
+      )}
+
+      {/* Export Modal */}
+      {isExportOpen && (
+        <NoteExportModal
+          title={title}
+          content={editor.getHTML()}
+          plainText={editor.getText()}
+          version={note.version}
+          updatedAt={note.updatedAt}
+          onClose={() => setIsExportOpen(false)}
         />
       )}
     </div>
