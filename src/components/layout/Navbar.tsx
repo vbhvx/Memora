@@ -12,7 +12,13 @@ import {
   Sparkles,
 } from 'lucide-react';
 
-export function Navbar({ onNewNote }: { onNewNote?: () => void }) {
+export function Navbar({
+  onNewNote,
+  onOpenCommandPalette,
+}: {
+  onNewNote?: () => void;
+  onOpenCommandPalette?: () => void;
+}) {
   const { user, logout } = useAuth();
   const router = useRouter();
   const hasClerk = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -34,13 +40,16 @@ export function Navbar({ onNewNote }: { onNewNote?: () => void }) {
       </div>
 
       <div className="flex items-center gap-3">
-        <Link
-          href="/search"
-          className="flex items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-1.5 text-sm text-neutral-500 hover:border-neutral-300 hover:bg-neutral-100 transition-colors"
+        <button
+          onClick={onOpenCommandPalette || (() => router.push('/search'))}
+          className="flex items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-1.5 text-xs text-neutral-500 hover:border-neutral-300 hover:bg-neutral-100 transition-colors"
         >
-          <Search className="h-4 w-4 text-neutral-400" />
-          <span className="hidden sm:inline">Search notes...</span>
-        </Link>
+          <Search className="h-3.5 w-3.5 text-neutral-400" />
+          <span className="hidden sm:inline">Search or jump to...</span>
+          <kbd className="hidden sm:inline-block ml-1 px-1.5 py-0.5 text-[10px] font-mono text-neutral-400 bg-white border border-neutral-200 rounded">
+            ⌘K
+          </kbd>
+        </button>
 
         {user ? (
           <>
