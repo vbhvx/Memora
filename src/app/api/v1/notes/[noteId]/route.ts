@@ -30,7 +30,9 @@ export async function PATCH(req: NextRequest, { params }: { params: { noteId: st
 export async function DELETE(req: NextRequest, { params }: { params: { noteId: string } }) {
   try {
     const user = await requireAuth(req);
-    const res = await NoteService.deleteNote(user.id, params.noteId);
+    const { searchParams } = new URL(req.url);
+    const hard = searchParams.get('hard') === 'true';
+    const res = await NoteService.deleteNote(user.id, params.noteId, hard);
     return NextResponse.json(res);
   } catch (err) {
     return formatErrorResponse(err);

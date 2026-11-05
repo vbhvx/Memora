@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
     const tagId = searchParams.get('tagId') || undefined;
     const isPinnedParam = searchParams.get('pinned');
     const isArchivedParam = searchParams.get('archived');
+    const isTrashParam = searchParams.get('trash');
     const sortParam = (searchParams.get('sort') || 'updated') as 'updated' | 'created' | 'title';
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!, 10) : 50;
 
@@ -23,6 +24,7 @@ export async function GET(req: NextRequest) {
       tagId,
       isPinned: isPinnedParam !== null ? isPinnedParam === 'true' : undefined,
       isArchived: isArchivedParam !== null ? isArchivedParam === 'true' : undefined,
+      isTrash: isTrashParam === 'true',
       sort: sortParam,
       limit,
     });

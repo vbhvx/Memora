@@ -15,6 +15,7 @@ import {
   CheckSquare,
   Search,
   Settings,
+  Trash2,
 } from 'lucide-react';
 
 interface FolderItem {
@@ -75,6 +76,7 @@ export function Sidebar({ onNewNote }: { onNewNote?: () => void }) {
     { label: 'Archived', href: '/notes?archived=true', icon: Archive },
     { label: 'Search', href: '/search', icon: Search },
     { label: 'Tasks & Actions', href: '/tasks', icon: CheckSquare },
+    { label: 'Trash', href: '/trash', icon: Trash2 },
   ];
 
   return (

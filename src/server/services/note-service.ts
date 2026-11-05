@@ -1,6 +1,6 @@
 import { db, pool } from '@/db/client';
 import { notes, noteRevisions, noteTags, tags, folders } from '@/db/schema';
-import { eq, and, isNull, desc, asc, inArray } from 'drizzle-orm';
+import { eq, and, isNull, isNotNull, desc, asc, inArray } from 'drizzle-orm';
 import { ApiError } from '../errors/api-error';
 import crypto from 'crypto';
 
@@ -29,6 +29,7 @@ export interface ListNotesOptions {
   tagId?: string;
   isPinned?: boolean;
   isArchived?: boolean;
+  isTrash?: boolean;
   sort?: 'updated' | 'created' | 'title';
   order?: 'asc' | 'desc';
   limit?: number;
@@ -223,7 +224,9 @@ export class NoteService {
   }
 
   static async listNotes(userId: string, options: ListNotesOptions = {}) {
-    const conditions = [eq(notes.ownerId, userId), isNull(notes.deletedAt)];
+    const conditions = options.isTrash
+      ? [eq(notes.ownerId, userId), isNotNull(notes.deletedAt)]
+      : [eq(notes.ownerId, userId), isNull(notes.deletedAt)];
 
     if (options.folderId !== undefined) {
       if (options.folderId === null || options.folderId === 'inbox') {
@@ -333,6 +336,23 @@ export class NoteService {
     });
 
     return this.getNoteById(userId, updated.id);
+  }
+
+  static async restoreNote(userId: string, noteId: string) {
+    const existing = await db.query.notes.findFirst({
+      where: and(eq(notes.id, noteId), eq(notes.ownerId, userId)),
+    });
+    if (!existing) {
+      throw ApiError.notFound('Note not found.');
+    }
+
+    const [restored] = await db
+      .update(notes)
+      .set({ deletedAt: null, updatedAt: new Date() })
+      .where(and(eq(notes.id, noteId), eq(notes.ownerId, userId)))
+      .returning();
+
+    return this.getNoteById(userId, restored.id);
   }
 }
 
