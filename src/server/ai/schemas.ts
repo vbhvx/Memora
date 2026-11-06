@@ -6,9 +6,15 @@ export const aiTitleResponseSchema = z.object({
 });
 export type AiTitleResponse = z.infer<typeof aiTitleResponseSchema>;
 
+export const summaryModeSchema = z
+  .enum(['executive', 'bullets', 'action_plan', 'tldr'])
+  .default('executive');
+export type SummaryMode = z.infer<typeof summaryModeSchema>;
+
 export const aiSummaryResponseSchema = z.object({
   summary: z.string().trim().min(1),
   keyPoints: z.array(z.string().trim()).default([]),
+  mode: summaryModeSchema.optional(),
   sourceVersion: z.number().int().optional(),
 });
 export type AiSummaryResponse = z.infer<typeof aiSummaryResponseSchema>;

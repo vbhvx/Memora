@@ -19,6 +19,27 @@ describe('Unit: AI Provider Adapter', () => {
     expect(res.sourceVersion).toBe(1);
   });
 
+  it('generates summaries with configurable style modes', async () => {
+    const content =
+      'Launch date scheduled for Friday. Review security architecture with team. Prepare marketing release notes. Deploy to staging environment.';
+
+    const execRes = await provider.generateSummary(content, 1, 'executive');
+    expect(execRes.mode).toBe('executive');
+    expect(execRes.summary).toBeDefined();
+
+    const bulletRes = await provider.generateSummary(content, 1, 'bullets');
+    expect(bulletRes.mode).toBe('bullets');
+    expect(bulletRes.keyPoints.length).toBeGreaterThan(0);
+
+    const actionRes = await provider.generateSummary(content, 1, 'action_plan');
+    expect(actionRes.mode).toBe('action_plan');
+    expect(actionRes.summary).toContain('Operational action plan');
+
+    const tldrRes = await provider.generateSummary(content, 1, 'tldr');
+    expect(tldrRes.mode).toBe('tldr');
+    expect(tldrRes.summary).toContain('TL;DR:');
+  });
+
   it('extracts action items, assignees, deadlines and source excerpts accurately', async () => {
     const content =
       'Review the API documentation. Ask Priya to verify the permission rules. Submit the report by Friday.';

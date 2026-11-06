@@ -80,7 +80,13 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
 
   // AI Review States
   const [titleSuggestion, setTitleSuggestion] = useState<{ title: string; sourceVersion: number } | null>(null);
-  const [summarySuggestion, setSummarySuggestion] = useState<{ summary: string; keyPoints: string[]; sourceVersion: number } | null>(null);
+  const [summaryMode, setSummaryMode] = useState<'executive' | 'bullets' | 'action_plan' | 'tldr'>('executive');
+  const [summarySuggestion, setSummarySuggestion] = useState<{
+    summary: string;
+    keyPoints: string[];
+    mode?: string;
+    sourceVersion: number;
+  } | null>(null);
   const [actionSuggestions, setActionSuggestions] = useState<Array<{
     title: string;
     description: string | null;
@@ -329,12 +335,16 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
     setIsAiLoading(true);
     try {
       const res = await apiFetch<{
-        summary: { summary: string; keyPoints: string[] };
+        summary: { summary: string; keyPoints: string[]; mode?: string };
         sourceVersion: number;
-      }>(`/api/v1/notes/${note.id}/ai/summary`, { method: 'POST' });
+      }>(`/api/v1/notes/${note.id}/ai/summary`, {
+        method: 'POST',
+        body: JSON.stringify({ mode: summaryMode }),
+      });
       setSummarySuggestion({
         summary: res.summary.summary,
         keyPoints: res.summary.keyPoints || [],
+        mode: res.summary.mode || summaryMode,
         sourceVersion: res.sourceVersion,
       });
     } catch (err: any) {
@@ -604,13 +614,26 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
         >
           Suggest Title
         </button>
-        <button
-          onClick={handleAiSummarize}
-          disabled={isAiLoading}
-          className="rounded bg-white border border-neutral-300 px-2.5 py-1 text-neutral-800 font-medium hover:bg-neutral-50 hover:border-neutral-400 transition shadow-xs disabled:opacity-50"
-        >
-          Summarize
-        </button>
+        <div className="inline-flex items-center rounded bg-white border border-neutral-300 shadow-xs overflow-hidden">
+          <button
+            onClick={handleAiSummarize}
+            disabled={isAiLoading}
+            className="px-2.5 py-1 text-neutral-800 font-medium hover:bg-neutral-50 transition disabled:opacity-50 border-r border-neutral-200"
+          >
+            Summarize
+          </button>
+          <select
+            value={summaryMode}
+            onChange={(e) => setSummaryMode(e.target.value as any)}
+            className="bg-transparent text-[11px] font-semibold text-neutral-600 px-2 py-1 border-0 focus:outline-none cursor-pointer hover:bg-neutral-50"
+            title="Summary style mode"
+          >
+            <option value="executive">Executive</option>
+            <option value="bullets">Key Bullets</option>
+            <option value="action_plan">Action Plan</option>
+            <option value="tldr">TL;DR</option>
+          </select>
+        </div>
         <button
           onClick={handleAiExtractActions}
           disabled={isAiLoading}
@@ -665,10 +688,17 @@ export function NoteEditor({ initialNote, onDelete }: NoteEditorProps) {
       {summarySuggestion && (
         <div className="bg-neutral-50 border border-neutral-300 rounded-lg p-4 text-sm space-y-3">
           <div className="flex items-center justify-between">
-            <span className="font-semibold text-neutral-900 flex items-center gap-1.5">
-              <FileText className="h-4 w-4 text-neutral-700" />
-              AI Summary
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-neutral-900 flex items-center gap-1.5">
+                <FileText className="h-4 w-4 text-neutral-700" />
+                AI Summary
+              </span>
+              {summarySuggestion.mode && (
+                <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-200 text-neutral-800">
+                  {summarySuggestion.mode.replace('_', ' ')}
+                </span>
+              )}
+            </div>
             <button
               onClick={() => {
                 navigator.clipboard.writeText(summarySuggestion.summary);

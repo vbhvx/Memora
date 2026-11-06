@@ -3,6 +3,7 @@ import {
   AiTitleResponse,
   AiSummaryResponse,
   AiActionsResponse,
+  SummaryMode,
   aiTitleResponseSchema,
   aiSummaryResponseSchema,
   aiActionsResponseSchema,
@@ -13,7 +14,7 @@ import { ApiError } from '../errors/api-error';
 export interface AiProvider {
   name: string;
   generateTitle(content: string, currentTitle?: string): Promise<AiTitleResponse>;
-  generateSummary(content: string, sourceVersion: number): Promise<AiSummaryResponse>;
+  generateSummary(content: string, sourceVersion: number, mode?: SummaryMode): Promise<AiSummaryResponse>;
   extractActions(content: string, sourceVersion: number): Promise<AiActionsResponse>;
 }
 
@@ -61,12 +62,28 @@ export class GeminiAiProvider implements AiProvider {
     return aiTitleResponseSchema.parse(parsed);
   }
 
-  async generateSummary(content: string, sourceVersion: number): Promise<AiSummaryResponse> {
-    const system =
+  async generateSummary(
+    content: string,
+    sourceVersion: number,
+    mode: SummaryMode = 'executive'
+  ): Promise<AiSummaryResponse> {
+    let system =
       'You are an executive summary assistant. Return a concise 2-3 sentence summary and 2-4 key takeaway bullet points. Return JSON matching: {"summary": string, "keyPoints": string[]}.';
+
+    if (mode === 'bullets') {
+      system =
+        'You are an analytical bullet-point summarizer. Return a short 1-sentence intro followed by 4-6 detailed, crisp bullet points capturing facts, details and numbers. Return JSON matching: {"summary": string, "keyPoints": string[]}.';
+    } else if (mode === 'action_plan') {
+      system =
+        'You are an operations and task roadmap summarizer. Provide a summary focused on immediate next steps, goals, and operational action plans, followed by 3-5 prioritized action points. Return JSON matching: {"summary": string, "keyPoints": string[]}.';
+    } else if (mode === 'tldr') {
+      system =
+        'You are a TL;DR summarizer. Return an ultra-concise 1-sentence summary and 2 quick punchy highlights. Return JSON matching: {"summary": string, "keyPoints": string[]}.';
+    }
+
     const raw = await this.callGemini(system, content);
     const parsed = JSON.parse(raw);
-    return aiSummaryResponseSchema.parse({ ...parsed, sourceVersion });
+    return aiSummaryResponseSchema.parse({ ...parsed, mode, sourceVersion });
   }
 
   async extractActions(content: string, sourceVersion: number): Promise<AiActionsResponse> {
@@ -107,12 +124,17 @@ export class MockAiProvider implements AiProvider {
     });
   }
 
-  async generateSummary(content: string, sourceVersion: number): Promise<AiSummaryResponse> {
+  async generateSummary(
+    content: string,
+    sourceVersion: number,
+    mode: SummaryMode = 'executive'
+  ): Promise<AiSummaryResponse> {
     const text = (content || '').trim();
     if (!text) {
       return {
         summary: 'This note is currently empty.',
         keyPoints: [],
+        mode,
         sourceVersion,
       };
     }
@@ -122,18 +144,49 @@ export class MockAiProvider implements AiProvider {
       .map((s) => s.trim())
       .filter((s) => s.length > 5);
 
-    const summaryText =
-      sentences.length <= 2
-        ? sentences.join(' ')
-        : `${sentences[0]} ${sentences[1] || ''}`.trim();
+    let summaryText = '';
+    let keyPoints: string[] = [];
 
-    const keyPoints = sentences
-      .filter((s) => /action|important|key|decision|plan|review|verify|status|launch|deadline|goal|priority/i.test(s))
-      .slice(0, 4);
+    if (mode === 'tldr') {
+      summaryText = `TL;DR: ${sentences[0] || 'Note summary unavailable.'}`;
+      keyPoints = sentences.slice(1, 3);
+    } else if (mode === 'bullets') {
+      summaryText = `Key breakdown of note contents:`;
+      keyPoints = sentences.slice(0, 5);
+    } else if (mode === 'action_plan') {
+      summaryText = `Operational action plan derived from content:`;
+      keyPoints = sentences
+        .filter((s) =>
+          /action|important|key|decision|plan|review|verify|status|launch|deadline|goal|priority|task|implement|deploy/i.test(
+            s
+          )
+        )
+        .slice(0, 4);
+      if (keyPoints.length === 0) {
+        keyPoints = sentences.slice(0, 3).map((s) => `Action item: ${s}`);
+      }
+    } else {
+      // executive
+      summaryText =
+        sentences.length <= 2
+          ? sentences.join(' ')
+          : `${sentences[0]} ${sentences[1] || ''}`.trim();
+      keyPoints = sentences
+        .filter((s) =>
+          /action|important|key|decision|plan|review|verify|status|launch|deadline|goal|priority/i.test(
+            s
+          )
+        )
+        .slice(0, 4);
+      if (keyPoints.length === 0 && sentences.length > 0) {
+        keyPoints = [sentences[0]];
+      }
+    }
 
     return aiSummaryResponseSchema.parse({
       summary: summaryText || 'Concise overview of the note content.',
-      keyPoints: keyPoints.length > 0 ? keyPoints : [sentences[0] || 'Key notes captured.'],
+      keyPoints: keyPoints.length > 0 ? keyPoints : ['Key notes captured.'],
+      mode,
       sourceVersion,
     });
   }
