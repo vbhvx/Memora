@@ -1,6 +1,6 @@
 import { db } from '@/db/client';
 import { noteShares, notes, noteComments, noteRevisions } from '@/db/schema';
-import { eq, and, isNull, desc } from 'drizzle-orm';
+import { eq, and, isNull, desc, sql } from 'drizzle-orm';
 import { ApiError } from '../errors/api-error';
 import crypto from 'crypto';
 
@@ -82,6 +82,8 @@ export class ShareService {
         permission: true,
         expiresAt: true,
         revokedAt: true,
+        viewCount: true,
+        lastAccessedAt: true,
         createdAt: true,
       },
     });
@@ -190,6 +192,15 @@ export class ShareService {
         },
       });
     }
+
+    // Record access telemetry
+    await db
+      .update(noteShares)
+      .set({
+        viewCount: sql`${noteShares.viewCount} + 1`,
+        lastAccessedAt: new Date(),
+      })
+      .where(eq(noteShares.id, share.id));
 
     return {
       permission: share.permission,
@@ -317,6 +328,52 @@ export class ShareService {
       version: updated.version,
       updatedAt: updated.updatedAt,
     };
+  }
+
+  // ----------------------------------------
+  // Comment Moderation (Note Owner)
+  // ----------------------------------------
+  static async listCommentsForNote(userId: string, noteId: string) {
+    const note = await db.query.notes.findFirst({
+      where: and(eq(notes.id, noteId), eq(notes.ownerId, userId), isNull(notes.deletedAt)),
+    });
+    if (!note) {
+      throw ApiError.notFound('Note not found or does not belong to you.');
+    }
+
+    return db.query.noteComments.findMany({
+      where: and(eq(noteComments.noteId, noteId), isNull(noteComments.deletedAt)),
+      orderBy: [desc(noteComments.createdAt)],
+      columns: {
+        id: true,
+        guestDisplayName: true,
+        content: true,
+        createdAt: true,
+      },
+    });
+  }
+
+  static async deleteComment(userId: string, noteId: string, commentId: string) {
+    const note = await db.query.notes.findFirst({
+      where: and(eq(notes.id, noteId), eq(notes.ownerId, userId)),
+    });
+    if (!note) {
+      throw ApiError.forbidden('Only the note owner can moderate comments.');
+    }
+
+    const comment = await db.query.noteComments.findFirst({
+      where: and(eq(noteComments.id, commentId), eq(noteComments.noteId, noteId)),
+    });
+    if (!comment) {
+      throw ApiError.notFound('Comment not found.');
+    }
+
+    await db
+      .update(noteComments)
+      .set({ deletedAt: new Date() })
+      .where(eq(noteComments.id, commentId));
+
+    return { success: true, id: commentId };
   }
 }
 

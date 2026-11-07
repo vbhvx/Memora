@@ -95,9 +95,13 @@ CREATE TABLE IF NOT EXISTS note_shares (
   permission TEXT NOT NULL DEFAULT 'view',
   expires_at TIMESTAMPTZ,
   revoked_at TIMESTAMPTZ,
+  view_count INTEGER NOT NULL DEFAULT 0,
+  last_accessed_at TIMESTAMPTZ,
   created_by TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+ALTER TABLE note_shares ADD COLUMN IF NOT EXISTS view_count INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE note_shares ADD COLUMN IF NOT EXISTS last_accessed_at TIMESTAMPTZ;
 CREATE INDEX IF NOT EXISTS note_shares_note_idx ON note_shares(note_id);
 CREATE INDEX IF NOT EXISTS note_shares_token_hash_idx ON note_shares(token_hash);
 CREATE INDEX IF NOT EXISTS note_shares_revoked_idx ON note_shares(revoked_at);
