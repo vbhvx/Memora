@@ -103,5 +103,61 @@ describe('Integration: Note CRUD, Versioning & Optimistic Concurrency', () => {
     const list = await NoteService.listNotes(userId);
     expect(list.some((n) => n.id === note.id)).toBe(false);
   });
+
+  it('rolls back to a previous revision snapshot and creates a new rollback revision', async () => {
+    const note = await NoteService.createNote(userId, {
+      title: 'Original Roadmap V1',
+      content: '<p>Roadmap V1 details</p>',
+      plainText: 'Roadmap V1 details',
+    });
+
+    // Update note to V2
+    await NoteService.updateNote(userId, note.id, {
+      title: 'Accidentally Altered Title V2',
+      content: '<p>Altered V2</p>',
+      plainText: 'Altered V2',
+      version: 1,
+    });
+
+    const revisions = await NoteService.getRevisions(userId, note.id);
+    const rev1 = revisions.find((r) => r.version === 1);
+    expect(rev1).toBeDefined();
+
+    // Rollback to revision 1
+    const rolledBack = await NoteService.rollbackRevision(userId, note.id, rev1!.id);
+    expect(rolledBack.version).toBe(3);
+    expect(rolledBack.title).toBe('Original Roadmap V1');
+    expect(rolledBack.plainText).toBe('Roadmap V1 details');
+
+    // Confirm new revision history has 3 revisions
+    const allRevs = await NoteService.getRevisions(userId, note.id);
+    expect(allRevs.length).toBe(3);
+  });
+
+  it('restores soft-deleted note from trash and permanently purges with hard=true', async () => {
+    const note = await NoteService.createNote(userId, {
+      title: 'Temporary Note For Trash Test',
+    });
+
+    // Soft delete
+    await NoteService.deleteNote(userId, note.id, false);
+
+    // Verify it appears in trash
+    const trashList = await NoteService.listNotes(userId, { isTrash: true });
+    expect(trashList.some((n) => n.id === note.id)).toBe(true);
+
+    // Restore note
+    const restored = await NoteService.restoreNote(userId, note.id);
+    expect(restored.deletedAt).toBeNull();
+
+    // Verify it is no longer in trash but active in regular list
+    const activeList = await NoteService.listNotes(userId);
+    expect(activeList.some((n) => n.id === note.id)).toBe(true);
+
+    // Hard purge
+    await NoteService.deleteNote(userId, note.id, true);
+    const trashAfterPurge = await NoteService.listNotes(userId, { isTrash: true });
+    expect(trashAfterPurge.some((n) => n.id === note.id)).toBe(false);
+  });
 });
 

@@ -148,7 +148,23 @@ paths:
         '409':
           description: Conflict detected. Stale update rejected.
     delete:
-      summary: Soft-delete a note
+      summary: Soft-delete or hard-purge a note
+      parameters:
+        - in: path
+          name: noteId
+          required: true
+          schema: { type: string }
+        - in: query
+          name: hard
+          schema: { type: boolean }
+          description: When true, permanently purges from trash
+      responses:
+        '200':
+          description: Note deleted or purged.
+
+  /notes/{noteId}/restore:
+    post:
+      summary: Restore a soft-deleted note from trash
       parameters:
         - in: path
           name: noteId
@@ -156,7 +172,7 @@ paths:
           schema: { type: string }
       responses:
         '200':
-          description: Note deleted.
+          description: Note restored successfully.
 
   /notes/{noteId}/revisions:
     get:
@@ -169,6 +185,22 @@ paths:
       responses:
         '200':
           description: Revision history list.
+
+  /notes/{noteId}/revisions/{revisionId}/rollback:
+    post:
+      summary: Roll back note content to a previous revision snapshot
+      parameters:
+        - in: path
+          name: noteId
+          required: true
+          schema: { type: string }
+        - in: path
+          name: revisionId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Note rolled back and new revision created.
 
   /notes/{noteId}/tags:
     put:
@@ -274,6 +306,13 @@ paths:
           name: noteId
           required: true
           schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mode: { type: string, enum: [executive, bullets, action_plan, tldr], default: executive }
       responses:
         '200':
           description: Reviewable summary tied to source version.
@@ -394,6 +433,34 @@ paths:
       responses:
         '200':
           description: Share link revoked.
+
+  /notes/{noteId}/comments:
+    get:
+      summary: List all active guest comments on a note for owner review
+      parameters:
+        - in: path
+          name: noteId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: List of comments.
+
+  /notes/{noteId}/comments/{commentId}:
+    delete:
+      summary: Moderate/delete an inappropriate guest comment (owner only)
+      parameters:
+        - in: path
+          name: noteId
+          required: true
+          schema: { type: string }
+        - in: path
+          name: commentId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Comment deleted.
 
   /shared/{token}:
     get:

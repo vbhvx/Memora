@@ -42,14 +42,16 @@ Memora reduces this friction through:
 | **Note Capture** | Rich-text editing with Tiptap (headings, lists, links, code blocks, blockquotes). |
 | **Autosave** | Debounced (750ms) autosave with explicit status indicator (`Saving`, `Saved`, `Offline`, `Save failed`, `Conflict detected`). |
 | **Concurrency (OCC)** | Version-based optimistic locking (`version` increments). Prevents silent overwrites with HTTP 409 conflict detection. |
+| **Revision History** | Full version snapshot timeline with one-click revision rollback to restore previous note versions. |
+| **Export & Live Stats** | Multi-format note export (`.md`, `.txt`, `.html`, `.json`) and real-time word count, character count, and reading time metrics. |
+| **Trash & Recovery** | Two-stage soft deletion with dedicated Trash view (`/trash`), one-click note restoration, and permanent purge. |
+| **Command Palette** | Universal `Cmd+K` / `Ctrl+K` command center for instant note search, page jumps, and quick note capture. |
 | **Organization** | Folders, subfolders, tag management, pinned notes, and archiving. |
 | **Full-Text Search** | Native PostgreSQL FTS with GIN index, `ts_rank_cd` relevance ranking, and `ts_headline` excerpts. |
-| **AI Title Suggestion** | Suggests concise, high-signal titles based on content; reviewable with "Apply" or "Dismiss". |
-| **AI Summarization** | Executive summaries with key bullet points tied to source note version. |
-| **AI Action Extraction** | Parses commitments, assignees, deadlines, and excerpts with review checkboxes. |
-| **Task Management** | Convert approved suggestions into tasks with deduplication; direct link back to source note. |
+| **AI Workflows** | Sugggests concise titles, parses commitments/assignees/deadlines with review approval, and multi-mode summarization (`executive`, `bullets`, `action_plan`, `tldr`). |
+| **Task Management** | Convert approved suggestions into tasks; date grouping (`Overdue`, `Due Today`, `Upcoming`, `No Date`), 3-way status cycles (`todo`, `in_progress`, `done`), and inline editing. |
 | **Guest Sharing** | 256-bit entropy tokens, SHA-256 storage, permissions (`view`, `comment`, `edit`), expiration, and instant revocation. |
-| **Guest Experience** | Unauthenticated guest page (`/shared/[token]`) with disclosure banner and comment threads. |
+| **Share Telemetry & Moderation** | View count and last-accessed telemetry on active share links, with owner moderation controls to review and delete guest comments. |
 
 ---
 

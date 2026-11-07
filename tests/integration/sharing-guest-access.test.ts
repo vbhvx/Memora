@@ -139,5 +139,50 @@ describe('Integration: Frictionless Sharing, Guest Access & Security Isolation',
 
     await expect(ShareService.getSharedNote(share.rawToken)).rejects.toThrow(ApiError);
   });
+
+  it('records view count telemetry and updates last accessed timestamp upon guest view', async () => {
+    const note = await NoteService.createNote(ownerId, { title: 'Telemetry Tracked Note' });
+    const share = await ShareService.createShare(ownerId, note.id, { permission: 'view' });
+
+    const beforeView = await ShareService.listSharesForNote(ownerId, note.id);
+    const targetBefore = beforeView.find((s) => s.id === share.id);
+    expect(targetBefore?.viewCount).toBe(0);
+    expect(targetBefore?.lastAccessedAt).toBeNull();
+
+    // Guest accesses twice
+    await ShareService.getSharedNote(share.rawToken);
+    await ShareService.getSharedNote(share.rawToken);
+
+    const afterView = await ShareService.listSharesForNote(ownerId, note.id);
+    const targetAfter = afterView.find((s) => s.id === share.id);
+    expect(targetAfter?.viewCount).toBe(2);
+    expect(targetAfter?.lastAccessedAt).not.toBeNull();
+  });
+
+  it('moderates guest comments by allowing note owner to delete comments and rejecting non-owners', async () => {
+    const note = await NoteService.createNote(ownerId, { title: 'Comment Moderation Note' });
+    const share = await ShareService.createShare(ownerId, note.id, { permission: 'comment' });
+
+    // Guest adds comment
+    const comment = await ShareService.addGuestComment(
+      share.rawToken,
+      'Test Reviewer',
+      'Inappropriate spam comment that should be moderated'
+    );
+    expect(comment.id).toBeDefined();
+
+    // Other user attempts to moderate - fails
+    await expect(
+      ShareService.deleteComment(otherUserId, note.id, comment.id)
+    ).rejects.toThrow(ApiError);
+
+    // Note owner moderates - succeeds
+    const modResult = await ShareService.deleteComment(ownerId, note.id, comment.id);
+    expect(modResult.success).toBe(true);
+
+    // Verify comment is no longer returned in un-deleted list
+    const remaining = await ShareService.listCommentsForNote(ownerId, note.id);
+    expect(remaining.some((c) => c.id === comment.id)).toBe(false);
+  });
 });
 

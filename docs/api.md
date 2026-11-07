@@ -50,12 +50,15 @@ All error responses conform to the following schema:
 - `GET /api/v1/auth/me` — Retrieve profile of authenticated user
 
 ### Notes Management
-- `GET /api/v1/notes` — List notes with filters (`folderId`, `tagId`, `pinned`, `archived`)
+- `GET /api/v1/notes` — List notes with filters (`folderId`, `tagId`, `pinned`, `archived`, `isTrash`)
 - `POST /api/v1/notes` — Create note and initial revision snapshot (v1)
 - `GET /api/v1/notes/:noteId` — Retrieve note by ID
 - `PATCH /api/v1/notes/:noteId` — Update note with optimistic concurrency control (`version`)
-- `DELETE /api/v1/notes/:noteId` — Soft delete note
+- `DELETE /api/v1/notes/:noteId` — Soft delete note (moves to trash)
+- `DELETE /api/v1/notes/:noteId?hard=true` — Permanently purge note
+- `POST /api/v1/notes/:noteId/restore` — Restore note from trash
 - `GET /api/v1/notes/:noteId/revisions` — Retrieve revision history snapshots
+- `POST /api/v1/notes/:noteId/revisions/:revisionId/rollback` — Roll back note state to a previous version
 - `PUT /api/v1/notes/:noteId/tags` — Replace assigned tags
 
 ### Organization
@@ -71,21 +74,23 @@ All error responses conform to the following schema:
 
 ### AI Workflows
 - `POST /api/v1/notes/:noteId/ai/title` — Suggest concise title
-- `POST /api/v1/notes/:noteId/ai/summary` — Generate summary and key bullet points
+- `POST /api/v1/notes/:noteId/ai/summary` — Generate summary with configurable mode (`executive`, `bullets`, `action_plan`, `tldr`)
 - `POST /api/v1/notes/:noteId/ai/actions` — Extract tasks with assignees and deadlines
 
 ### Tasks & Action Items
 - `GET /api/v1/tasks` — List tasks with filters (`status`, `priority`)
 - `POST /api/v1/tasks` — Create task manually
-- `PATCH /api/v1/tasks/:taskId` — Update task status or fields
+- `PATCH /api/v1/tasks/:taskId` — Update task status (`todo`, `in_progress`, `done`) or fields
 - `DELETE /api/v1/tasks/:taskId` — Delete task
 - `POST /api/v1/tasks/from-suggestions` — Convert approved suggestions into tasks with deduplication
 
 ### Sharing & Guest Access
 - `POST /api/v1/notes/:noteId/shares` — Generate secure share link (`view`, `comment`, `edit`)
-- `GET /api/v1/notes/:noteId/shares` — List active shares for owner
+- `GET /api/v1/notes/:noteId/shares` — List active shares for owner with `viewCount` telemetry & `lastAccessedAt`
 - `DELETE /api/v1/notes/:noteId/shares/:shareId` — Revoke share immediately
-- `GET /api/v1/shared/:token` — Unauthenticated guest reading
+- `GET /api/v1/notes/:noteId/comments` — List guest comments on note for owner review
+- `DELETE /api/v1/notes/:noteId/comments/:commentId` — Moderate/delete inappropriate guest comment
+- `GET /api/v1/shared/:token` — Unauthenticated guest reading (increments telemetry `viewCount`)
 - `POST /api/v1/shared/:token/comments` — Post guest comment (if permitted)
 - `PATCH /api/v1/shared/:token/edit` — Guest editing with optimistic concurrency
 
