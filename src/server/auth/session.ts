@@ -2,9 +2,19 @@ import { SignJWT, jwtVerify } from 'jose';
 import bcrypt from 'bcryptjs';
 import { NextRequest } from 'next/server';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'memora-development-jwt-secret-minimum-32-chars-long'
-);
+const DEV_FALLBACK_SECRET = 'memora-development-jwt-secret-minimum-32-chars-long';
+
+// The fallback only applies outside production (local dev and tests).
+function getSigningSecret(): Uint8Array {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('JWT_SECRET must be set in production');
+    }
+    return new TextEncoder().encode(DEV_FALLBACK_SECRET);
+  }
+  return new TextEncoder().encode(secret);
+}
 
 export const SESSION_COOKIE_NAME = 'memora_session';
 export const SESSION_EXPIRY = '7d';
@@ -33,12 +43,12 @@ export async function signSessionToken(user: AuthUser): Promise<string> {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(SESSION_EXPIRY)
-    .sign(JWT_SECRET);
+    .sign(getSigningSecret());
 }
 
 export async function verifySessionToken(token: string): Promise<AuthUser | null> {
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, getSigningSecret());
     if (!payload.id || !payload.email || !payload.name) {
       return null;
     }
