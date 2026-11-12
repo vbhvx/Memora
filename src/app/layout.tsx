@@ -19,6 +19,14 @@ export const metadata: Metadata = {
   title: 'Memora — AI-Powered Notes & Action Management',
   description:
     'Capture information once, find it when you need it, understand it quickly, and turn it into action.',
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: '32x32' },
+    ],
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({
